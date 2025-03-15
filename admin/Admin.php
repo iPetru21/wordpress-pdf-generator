@@ -130,7 +130,7 @@ class GeneratePdfAdmin {
                     <tr>
                         <th scope="row"><label for="punctaj_intrebare">Punctaj per întrebare</label></th>
                         <td>
-                            <input type="number" id="punctaj_intrebare" name="punctaj_intrebare" value="<?php echo esc_attr(get_option('punctaj_intrebare', '')); ?>" class="regular-text" step="1" />
+                            <input type="number" id="punctaj_intrebare" name="punctaj_intrebare" value="<?php echo esc_attr(get_option('punctaj_intrebare', '')); ?>" class="regular-text" step="0.1" />
                         </td>
                     </tr>
                     <tr>

@@ -90,8 +90,8 @@ margin-right: 45px;" src="<?= plugin_dir_url(__DIR__) ?>/assets/images/guvern.pn
                     <?php if($index == 1): ?>
                         <td rowspan="3">
                         <?php if( $examen['type'] == 'evaluare' ): ?>
-                            <p>Nume: <?= $user->first_name ?></p>
-                            <p>Prenume: <?= $user->last_name ?></p>
+                            <p>Nume: <?= $user->last_name ?></p>
+                            <p>Prenume: <?= $user->first_name ?></p>
                             <p>CNP: <?= $cnp ?></p>
                         <?php endif; ?>
 
