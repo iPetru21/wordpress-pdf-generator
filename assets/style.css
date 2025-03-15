@@ -1,0 +1,68 @@
+body {
+    padding: 0;
+    margin: 0;
+    }
+    
+    .container {
+    background-color: white;
+    padding: 0 25px;
+    max-width: 1200px;
+    margin: 0 auto;
+    }
+    
+    
+    /* HEADER */
+    
+    .header {
+    overflow: hidden; /* Previne colapsarea marginilor */
+    padding: 10px 0;
+    border-bottom: 1px solid black;
+    }
+    
+    .header img {
+    display: block;
+    height: 50px;
+    }
+    
+    /* INFO DOC */
+    .info {
+        margin: 10px 0;
+    }
+    
+    /* TABLE */
+    
+    table {
+    width: 100%;
+    }
+    
+    table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    }
+    
+    th {
+    padding: 15px 10px;
+    }
+    
+    th p {
+    font-weight: 400;
+    margin: 0;
+    text-align: left;
+    }
+    
+    td {
+    padding: 5px;
+    }
+    
+    tr td.score {
+    text-align: center;
+    }
+    
+    .user-comission {
+    margin-top: 25px;
+    }
+    
+    /* F00TER */
+    .footer {
+    margin-top: 15px;
+}
