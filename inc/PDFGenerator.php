@@ -56,14 +56,15 @@ class PDFGenerator {
             $mpdf->WriteHTML($html);
 
             $upload_dir = wp_upload_dir();
-            $pdf_temp_path = $upload_dir['path'] . "/cursant_{$user_id}.pdf"; // Calea fișierului PDF
+            $pdf_filename = sanitize_file_name("/{$user->display_name}-{$test_data['examen']['title']}.pdf");
+            $pdf_temp_path = $upload_dir['path'] . $pdf_filename; // Calea fișierului PDF
             
             // Generează fișierul PDF
             $mpdf->Output($pdf_temp_path, \Mpdf\Output\Destination::FILE);
             
             // Creați un tablou de date pentru atașament
             $attachment = array(
-                'guid'           => $upload_dir['url'] . "/cursant_{$user_id}.pdf", // URL-ul fișierului
+                'guid'           => $upload_dir['url'] . $filename, // URL-ul fișierului
                 'post_mime_type' => 'application/pdf', // Tipul MIME
                 'post_title'     => "Test {$user->display_name} - Grupă: {$this->grupa}",
                 'post_content'   => '',

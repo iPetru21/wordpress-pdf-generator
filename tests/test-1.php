@@ -3,7 +3,7 @@
 $examen = [
     'title' => 'Examen teorie - AES Id 304114',
     'link' => site_url('test-1'),
-    'type' => 'evaluare'
+    'type' => 'evaluare' // evaluare/examen
 ];
 
 $questions = [
