@@ -40,7 +40,8 @@ class PDFGenerator {
             $user_id = $user->ID;
             $cnp = get_user_meta($user_id, 'cnp', true);
             $id = $this->encrypt_cnp_to_id($cnp);
-            $answers = $this->generate_random_answers($test_data['questions'], 90);
+            $success_rate = get_option('success_rate', 90);
+            $answers = $this->generate_random_answers($test_data['questions'], $success_rate);
 
             $mpdf = new \Mpdf\Mpdf();
             
@@ -57,14 +58,14 @@ class PDFGenerator {
 
             $upload_dir = wp_upload_dir();
             $pdf_filename = sanitize_file_name("/{$user->display_name}-{$test_data['examen']['title']}.pdf");
-            $pdf_temp_path = $upload_dir['path'] . $pdf_filename; // Calea fișierului PDF
+            $pdf_temp_path = $upload_dir['path'] .'/'. $pdf_filename; // Calea fișierului PDF
             
             // Generează fișierul PDF
             $mpdf->Output($pdf_temp_path, \Mpdf\Output\Destination::FILE);
             
             // Creați un tablou de date pentru atașament
             $attachment = array(
-                'guid'           => $upload_dir['url'] . $filename, // URL-ul fișierului
+                'guid'           => $upload_dir['url'] .'/'. $pdf_filename, // URL-ul fișierului
                 'post_mime_type' => 'application/pdf', // Tipul MIME
                 'post_title'     => "Test {$user->display_name} - Grupă: {$this->grupa}",
                 'post_content'   => '',
@@ -88,19 +89,32 @@ class PDFGenerator {
     // Generarea răspunsurilor aleatorii
     function generate_random_answers($questions, $accuracy = 90) {
         $answers = [];
+        $options = ['a', 'b', 'c', 'd'];
+        $total_questions = count($questions);
+        $min_correct = ceil($total_questions / 2); // Asigură minim 50% răspunsuri corecte
+    
+        // Generăm un array cu indecși aleatori pentru răspunsurile corecte
+        $correct_indices = array_rand($questions, $min_correct);
+        if (!is_array($correct_indices)) {
+            $correct_indices = [$correct_indices];
+        }
+    
         foreach ($questions as $index => $question) {
-            $correct_answer = $question[1]; // Răspunsul corect este al doilea element din fiecare întrebare
-            $options = ['a', 'b', 'c', 'd'];
-            
-            if (rand(1, 100) <= $accuracy) {
+            $correct_answer = $question[1];
+    
+            if (in_array($index, $correct_indices) || rand(1, 100) <= $accuracy) {
+                // Asigurăm că acest index are un răspuns corect
                 $answers[$index] = $correct_answer;
             } else {
+                // Alegem un răspuns greșit
                 $wrong_options = array_diff($options, [$correct_answer]);
-                $answers[$index] = $wrong_options[array_rand($wrong_options)];
+                $reindexed_wrong_options = array_values($wrong_options);
+                $answers[$index] = $reindexed_wrong_options[array_rand($reindexed_wrong_options)];
             }
         }
+    
         return $answers;
-    }
+    }    
 
     function include_selected_test() {
         $test_id = get_option('test_activ');

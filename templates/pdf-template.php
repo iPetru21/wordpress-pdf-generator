@@ -43,9 +43,8 @@ margin-right: 45px;" src="<?= plugin_dir_url(__DIR__) ?>/assets/images/guvern.pn
 
                     $question_text = $question[0];
                     $correct_answer = $question[1];
-                    $correct_answer_text = $question[3];
                     $user_answer = $answers[$index];
-    
+
                     $answer_text = $options[$index][$user_answer];
 
                     if ($user_answer === $correct_answer) {
@@ -56,7 +55,7 @@ margin-right: 45px;" src="<?= plugin_dir_url(__DIR__) ?>/assets/images/guvern.pn
                     ?>
                     <tr>
                         <td>
-                            <?= ++$index . " " .$question_text ?>
+                            <?= $index + 1 . " " .$question_text ?>
                         </td>
                         <td>
                             <?= $user_answer. ") " .$answer_text ?>

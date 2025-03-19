@@ -139,6 +139,12 @@ class GeneratePdfAdmin {
                             <input type="number" id="punctaj_oficiu" name="punctaj_oficiu" value="<?php echo esc_attr(get_option('punctaj_oficiu')); ?>" class="regular-text" step="1" />
                         </td>
                     </tr>
+                    <tr>
+                        <th scope="row"><label for="success_rate">Rată success</label></th>
+                        <td>
+                            <input type="number" id="success_rate" name="success_rate" value="<?php echo esc_attr(get_option('success_rate')); ?>" class="regular-text" step="1" min="0" max="100"/>
+                        </td>
+                    </tr>
                 </table>
                 <?php submit_button(); ?>
             </form>
@@ -163,6 +169,7 @@ class GeneratePdfAdmin {
         register_setting('cursant_pdf_settings_group', 'punctaj_intrebare');
         register_setting('cursant_pdf_settings_group', 'punctaj_oficiu');
         register_setting('cursant_pdf_settings_group', 'test_activ');
+        register_setting('cursant_pdf_settings_group', 'success_rate');
     }
 
     // Adăugăm meniul pentru setări
