@@ -1,0 +1,21 @@
+# Composer
+/vendor/
+composer.lock
+
+# WordPress
+node_modules/
+.DS_Store
+*.log
+*.swp
+*.swo
+*~
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Temporary files
+*.tmp
+*.bak

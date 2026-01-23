@@ -11,9 +11,46 @@
 - Supports different PDF libraries like TCPDF or DomPDF
 
 ## Installation
+
+### Instalare Standard
 1. Download the plugin ZIP file or clone the repository.
 2. Upload the plugin folder to `/wp-content/plugins/generate-pdf-tests/`.
 3. Activate the plugin from the **Plugins** menu in WordPress.
+
+### Instalare Dependențe Composer (pentru Update-uri Automate)
+
+Pentru a activa sistemul de update automat din GitHub, trebuie să instalați dependențele Composer:
+
+```bash
+cd wp-content/plugins/generate-pdf-tests
+composer install
+```
+
+Dacă nu aveți Composer instalat, îl puteți instala de la [getcomposer.org](https://getcomposer.org/download/).
+
+### Configurare Update-uri din GitHub
+
+După instalarea dependențelor, configurați repository-ul GitHub în fișierul `generate-pdf-tests.php`:
+
+1. Deschideți `generate-pdf-tests.php`
+2. Actualizați următoarele constante:
+   - `GENERATE_PDF_TESTS_GITHUB_REPO` - URL-ul repository-ului GitHub
+   - `GENERATE_PDF_TESTS_GITHUB_BRANCH` - Branch-ul pentru update-uri (ex: 'main', 'master')
+   - `GENERATE_PDF_TESTS_GITHUB_TOKEN` - Token GitHub (doar pentru repository-uri private)
+   - `GENERATE_PDF_TESTS_UPDATE_ENABLED` - Activează/dezactivează update-urile (true/false)
+
+**Exemplu configurare:**
+```php
+define( 'GENERATE_PDF_TESTS_GITHUB_REPO', 'https://github.com/username/repository-name' );
+define( 'GENERATE_PDF_TESTS_GITHUB_BRANCH', 'main' );
+define( 'GENERATE_PDF_TESTS_GITHUB_TOKEN', '' ); // Lăsați gol pentru repository-uri publice
+define( 'GENERATE_PDF_TESTS_UPDATE_ENABLED', true );
+```
+
+**Pentru repository-uri private:**
+1. Creați un Personal Access Token în GitHub: Settings > Developer settings > Personal access tokens > Tokens (classic)
+2. Acordați permisiunea `repo` pentru acces la repository-uri private
+3. Adăugați token-ul în constanta `GENERATE_PDF_TESTS_GITHUB_TOKEN`
 
 ## Usage
 1. Navigate to the plugin settings page under **Settings > Generate PDF Tests**.
@@ -37,6 +74,41 @@
 - WordPress 5.0+
 - PHP 7.4+
 - TCPDF or DomPDF installed (optional for enhanced PDF generation)
+- Composer (pentru update-uri automate din GitHub)
+
+## Changelog
+
+### Version 1.3 (Curent)
+
+#### ✨ Funcționalități noi
+- **Sistem de update automat din GitHub**: Integrare completă cu YahnisElsts Plugin Update Checker pentru update-uri automate din repository-ul GitHub
+- **Suport Composer**: Adăugat `composer.json` pentru gestionarea dependențelor
+- **Configurare centralizată**: Toate setările pentru update-uri sunt configurate prin constante în fișierul principal
+
+#### 🔄 Modificări majore
+- **Sistem de generare note îmbunătățit**: 
+  - Înlocuit câmpul "Rată success" cu "Notă minimă" în interfața de administrare
+  - Notele generate sunt acum aleatorii între nota minimă setată și 10
+  - Logica de calcul a răspunsurilor corecte a fost optimizată pentru a garanta note în intervalul specificat
+- **Algoritm de generare răspunsuri**: 
+  - Reimplementat complet funcția `generate_random_answers()` pentru a genera note precise în intervalul dorit
+  - Eliminată problema unde toate testele primeau aceeași notă (9)
+
+#### 🛠️ Îmbunătățiri tehnice
+- Adăugat `.gitignore` pentru excluderea directorului `vendor/` și fișierelor temporare
+- Mesaje de avertizare în admin dacă biblioteca de update nu este instalată
+- Suport pentru repository-uri GitHub publice și private
+- Suport pentru release assets din GitHub
+
+#### 📝 Documentație
+- Actualizat README.md cu instrucțiuni detaliate pentru instalarea dependențelor Composer
+- Adăugate exemple de configurare pentru sistemul de update
+- Documentație pentru repository-uri private cu token GitHub
+
+### Version 1.0
+- Versiunea inițială a pluginului
+- Generare PDF cu răspunsurile cursanților
+- Sistem de generare răspunsuri aleatorii bazat pe rată de succes
 
 ## Contributing
 1. Fork the repository.

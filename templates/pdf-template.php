@@ -28,7 +28,7 @@ margin-right: 45px;" src="<?= plugin_dir_url(__DIR__) ?>/assets/images/guvern.pn
                 <p>ID: <?= $id ?></p>
                 <p>Link test: <?= $examen['link'] ?> </p>
             </div>
-            <h2><?= $examen['title'] ?></h2>
+            <h3><?= $examen['title'] ?></h3>
             <table class="user-answers">
                 <tr>
                     <th>ÎNTREBARE</th>
@@ -67,18 +67,18 @@ margin-right: 45px;" src="<?= plugin_dir_url(__DIR__) ?>/assets/images/guvern.pn
                 </table>
                 <table class="user-comission">
                 <tr>
-                    <th style="text-transform: uppercase;">COMISIE DE <?= $examen['type'] ?></th>
-                    <th colspan="2" style="font-weight: 300;text-align:left;">
+                    <th style="text-transform: uppercase;width:30%">COMISIE DE <?= $examen['type'] ?></th>
+                    <th <?= ( $examen['type'] != 'examen' ) ? 'colspan="2"' : '' ?> style="font-weight: 300;text-align:left; width:40%">
                         <p>*Fiecare răspuns se notează cu <?= $this->punctaj_intrebare ?> puncte</p>
                         <p>*<?= $this->punctaj_oficiu ?> puncte din oficiu</p>
                         <p>*Doar un răspuns este corect</p>
                     </th>
-                    <th>ID TEST: <?= $id ?></th>
+                    <th style="width:30%">ID TEST: <?= $id ?></th>
                 </tr>
                 <?php foreach( $commission as $index => $committee): ?>
                 <tr>
                     <td><?= $committee ?></td>
-                    <td width="100px">
+                    <td style="width:15%">
                         <?php if( $index != 2 ): ?>
                             NOTA <?= ++$index ?>: <?= $score ?>
                         <?php else: ?>
@@ -87,21 +87,16 @@ margin-right: 45px;" src="<?= plugin_dir_url(__DIR__) ?>/assets/images/guvern.pn
                     </td>
                     <td>Semnătură</td>
                     <?php if($index == 1): ?>
-                        <td rowspan="3">
                         <?php if( $examen['type'] == 'evaluare' ): ?>
-                            <p>Nume: <?= $user->last_name ?></p>
-                            <p>Prenume: <?= $user->first_name ?></p>
-                            <p>CNP: <?= $cnp ?></p>
+							<td rowspan="3">
+								<p>Nume: <?= $user->first_name .' '. $user->last_name ?></p><br>
+								<p>CNP: <?= $cnp ?></p>
+							</td>
                         <?php endif; ?>
-
-                        </td>
                     <?php endif; ?>
                 </tr>
                 <?php endforeach; ?>
             </table>
-            <div class="footer">
-                Copyright © 2025 Cella Invest
-            </div>
         </div>
     </body>
 </html>

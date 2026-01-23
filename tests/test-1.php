@@ -1,61 +1,72 @@
 <?php
 
 $examen = [
-    'title' => 'Examen teorie - AES Id 304114',
-    'link' => site_url('test-1'),
-    'type' => 'evaluare' // evaluare/examen
+    'title' => 'Examen Practică – COMPETENȚĂ DIGITALĂ, INCLUSIV DE SIGURANȚĂ PE INTERNET ȘI SECURITATE CIBERNETICĂ',
+    'link' => site_url('examen-practica-tehnologia-informatiei-si-comunicatiilor-tic-model-special'),
+    'type' => 'examen',
 ];
 
 $questions = [
-    ["Care este principalul obiectiv al unei întreprinderi sociale?", "b"],
-    ["Ce element definește o întreprindere socială față de o afacere tradițională?", "b"],
-    ["Conform legislației din România, ce procent minim din profit trebuie reinvestit într-o întreprindere socială?", "c"],
-    ["Care dintre următoarele este o caracteristică esențială a unei întreprinderi sociale?", "c"],
-    ["Ce categorie de persoane poate beneficia direct de activitatea unei întreprinderi sociale?", "b"],
-    ["Cum poate o întreprindere socială să își asigure sustenabilitatea financiară?", "b"],
+	["Cum creezi un folder nou în Windows?", "a"],
+	["Cum trimiți un fișier ca atașament într-un e-mail?", "a"],
+	["Cum verifici dacă un site este securizat?", "a"],
+	["Cum salvezi un document Word ca PDF?", "a"],
+	["Cum poți organiza fișierele într-un folder?", "a"],
+	["Cum verifici spațiul liber pe disc?", "a"],
+	["Cum inserezi un tabel în Word?", "a"],
+	["Cum se face o captură de ecran în Windows?", "a"],
+	["Cum trimiți un fișier prin Google Drive altui utilizator?", "a"]
 ];
-
 $options = [
-    [
-        'a' => "Maximizarea profitului acționarilor",
-        'b' => "Crearea de locuri de muncă pentru persoane vulnerabile și rezolvarea unor probleme sociale",
-        'c' => "Creșterea competitivității economiei naționale",
-        'd' => "Dezvoltarea comerțului internațional"
-    ],
-    [
-        'a' => "Plătește taxe mai mici",
-        'b' => "Prioritizează impactul social înaintea profitului",
-        'c' => "Poate fi deținută doar de stat",
-        'd' => "Nu are obligația de a reinvesti profitul"
-    ],
-    [
-        'a' => "10%",
-        'b' => "25%",
-        'c' => "50%",
-        'd' => "90%"
-    ],
-    [
-        'a' => "Nu poate avea angajați plătiți",
-        'b' => "Oferă exclusiv servicii educaționale",
-        'c' => "Implică participarea democratică a membrilor în luarea deciziilor",
-        'd' => "Este finanțată exclusiv din fonduri europene"
-    ],
-    [
-        'a' => "Doar antreprenorii care investesc în afacere",
-        'b' => "Persoanele aflate în dificultate sau din grupuri vulnerabile",
-        'c' => "Exclusiv angajații companiei",
-        'd' => "Numai persoanele din mediul rural"
-    ],
-    [
-        'a' => "Exclusiv prin donații și granturi",
-        'b' => "Prin generarea de venituri din activități economice și reinvestirea acestora",
-        'c' => "Prin sprijinul permanent al autorităților locale",
-        'd' => "Doar prin contribuțiile membrilor săi"
-    ]
+	[
+	'a' => "Click dreapta → New → Folder",
+	'b' => "Închizi calculatorul și repornești",
+	'c' => "Apeși tasta F1"
+	],
+	[
+	'a' => "Clic pe „Attach” / „Atașează fișier” și selectezi documentul",
+	'b' => "Scrii numele fișierului în mesaj",
+	'c' => "Deschizi fișierul și îl copiezi în browser"
+	],
+	[
+	'a' => "Are simbolul lacătului și prefixul HTTPS",
+	'b' => "Are imagini colorate",
+	'c' => "Are reclame multe"
+	],
+	[
+	'a' => "File → Save As → alegi PDF",
+	'b' => "Apeși tasta Print Screen",
+	'c' => "Schimbi fontul documentului"
+	],
+	[
+	'a' => "Sortare după nume, dată, tip sau dimensiune",
+	'b' => "Ștergând toate fișierele",
+	'c' => "Mutându-le în coșul de gunoi"
+	],
+	[
+	'a' => "Click dreapta pe „This PC” → Properties",
+	'b' => "Deschizi un browser web",
+	'c' => "Apeși Esc"
+	],
+	[
+	'a' => "Insert → Table",
+	'b' => "View → Zoom",
+	'c' => "Design → Themes"
+	],
+	[
+	'a' => "Tasta Print Screen sau Win + Shift + S",
+	'b' => "Tasta F11",
+	'c' => "Rulezi o aplicație de muzică"
+	],
+	[
+	'a' => "Click dreapta → Share → introduci e-mailul utilizatorului",
+	'b' => "Îl copiezi în Notepad",
+	'c' => "Îl redenumești"
+	]
 ];
 
 $commission = [
-    'Membru 1 - Pîrvan Cornelia Ancuța',
-    'Membru 2 - Stanea Valeriu',
-    'Președinte - Rociu Călin - Adrian'
+    'Membru 1 - MUNTEAN DELIA  ELENA',
+    'Membru 2 - BALDEA ELENA',
+    'Președinte - BAICU MARIA VERONICA'
 ];

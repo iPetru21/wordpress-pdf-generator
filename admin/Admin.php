@@ -17,8 +17,83 @@ class GeneratePdfAdmin {
         add_action('edit_user_profile_update', [ $this, 'save_cnp_field' ]);
         add_action('personal_options_update', [ $this, 'validate_cnp_field' ]);
         add_action('edit_user_profile_update', [ $this, 'validate_cnp_field' ]);
-        add_action('admin_post_cursant_pdf_generate_report', [ $this, 'cursant_pdf_generate_report' ]);    
+        add_action('admin_post_cursant_pdf_generate_report', [ $this, 'cursant_pdf_generate_report' ]);   
+		// Adaugă pagina în admin
+		add_action('admin_menu', function () {
+			add_menu_page('Setări Decriptare CNP', 'Decriptare CNP', 'manage_options', 'decriptare-cnp', [$this,'cnp_settings_page']);
+		}); 
     }
+
+	function cnp_settings_page() {
+		// Obține toate rolurile
+		global $wp_roles;
+		$all_roles = $wp_roles->roles;
+
+		$selected_role = $_POST['selected_role'] ?? '';
+		$input_code = $_POST['input_code'] ?? '';
+		$decrypted_cnp = '';
+		$decrypted_user = null;
+
+		if (!empty($selected_role) && !empty($input_code)) {
+			$users = get_users(['role' => $selected_role]);
+
+			$generator = new PDFGenerator();
+
+			foreach ($users as $user) {
+				$cnp = get_user_meta($user->ID, 'cnp', true);
+				if (!empty($cnp)) {
+					if ($generator->encrypt_cnp_to_id($cnp) === $input_code) {
+						$decrypted_cnp = $cnp;
+						$decrypted_user = $user;
+						break;
+					}
+				}
+			}
+		}
+		?>
+
+		<div class="wrap">
+			<h1>Decriptare CNP din Cod Numeric</h1>
+			<form method="post">
+				<table class="form-table">
+					<tr>
+						<th><label for="selected_role">Grupa (Rol):</label></th>
+						<td>
+							<select name="selected_role" id="selected_role">
+								<option value="">Selectează un rol</option>
+								<?php foreach ($all_roles as $key => $role): ?>
+									<option value="<?php echo esc_attr($key); ?>" <?php selected($selected_role, $key); ?>>
+										<?php echo esc_html($role['name']); ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="input_code">Cod numeric criptat:</label></th>
+						<td><input type="text" name="input_code" id="input_code" value="<?php echo esc_attr($input_code); ?>" /></td>
+					</tr>
+				</table>
+				<?php submit_button('Decriptează'); ?>
+			</form>
+
+			<?php if (!empty($decrypted_cnp) && $decrypted_user): 
+				$first_name = get_user_meta($decrypted_user->ID, 'first_name', true);
+				$last_name = get_user_meta($decrypted_user->ID, 'last_name', true);
+				$full_name = trim($first_name . ' ' . $last_name);
+			?>
+				<div class="notice notice-success">
+					<p><strong>Utilizator găsit:</strong> <?php echo esc_html($full_name); ?></p>
+					<p><strong>CNP decriptat:</strong> <?php echo esc_html($decrypted_cnp); ?></p>
+				</div>
+			<?php elseif ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
+				<div class="notice notice-error">
+					<p>Codul nu a putut fi decriptat pentru rolul selectat.</p>
+				</div>
+			<?php endif; ?>
+		</div>
+		<?php
+	}
 
     function validate_cnp_field($user_id) {
         if (!empty($_POST['cnp']) && !preg_match('/^[0-9]{13}$/', $_POST['cnp'])) {
@@ -140,9 +215,10 @@ class GeneratePdfAdmin {
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="success_rate">Rată success</label></th>
+                        <th scope="row"><label for="nota_minima">Notă minimă</label></th>
                         <td>
-                            <input type="number" id="success_rate" name="success_rate" value="<?php echo esc_attr(get_option('success_rate')); ?>" class="regular-text" step="1" min="0" max="100"/>
+                            <input type="number" id="nota_minima" name="nota_minima" value="<?php echo esc_attr(get_option('nota_minima', 8)); ?>" class="regular-text" step="0.1" min="1" max="10"/>
+                            <p class="description">Nota minimă pe care o poate avea un test generat (toate notele vor fi între această valoare și 10).</p>
                         </td>
                     </tr>
                 </table>
@@ -169,7 +245,7 @@ class GeneratePdfAdmin {
         register_setting('cursant_pdf_settings_group', 'punctaj_intrebare');
         register_setting('cursant_pdf_settings_group', 'punctaj_oficiu');
         register_setting('cursant_pdf_settings_group', 'test_activ');
-        register_setting('cursant_pdf_settings_group', 'success_rate');
+        register_setting('cursant_pdf_settings_group', 'nota_minima');
     }
 
     // Adăugăm meniul pentru setări

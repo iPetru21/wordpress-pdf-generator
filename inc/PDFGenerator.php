@@ -40,73 +40,94 @@ class PDFGenerator {
             $user_id = $user->ID;
             $cnp = get_user_meta($user_id, 'cnp', true);
             $id = $this->encrypt_cnp_to_id($cnp);
-            $success_rate = get_option('success_rate', 90);
-            $answers = $this->generate_random_answers($test_data['questions'], $success_rate);
-
-            $mpdf = new \Mpdf\Mpdf();
-            
-            //     $html .= "<h2>Nota finală: {$score}</h2>";
+            $nota_minima = floatval(get_option('nota_minima', 8));
+            $answers = $this->generate_random_answers($test_data['questions'], $nota_minima);
+        
             $css = file_get_contents(plugin_dir_path(__DIR__) . 'assets/style.css');
-
-            // Apply CSS styles
-            $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
-
-            ob_start();
-            include plugin_dir_path(__DIR__) . 'templates/pdf-template.php';
-            $html = ob_get_clean();
-            $mpdf->WriteHTML($html);
-
             $upload_dir = wp_upload_dir();
-            $pdf_filename = sanitize_file_name("/{$user->display_name}-{$test_data['examen']['title']}.pdf");
-            $pdf_temp_path = $upload_dir['path'] .'/'. $pdf_filename; // Calea fișierului PDF
-            
-            // Generează fișierul PDF
-            $mpdf->Output($pdf_temp_path, \Mpdf\Output\Destination::FILE);
-            
-            // Creați un tablou de date pentru atașament
-            $attachment = array(
-                'guid'           => $upload_dir['url'] .'/'. $pdf_filename, // URL-ul fișierului
-                'post_mime_type' => 'application/pdf', // Tipul MIME
-                'post_title'     => "Test {$user->display_name} - Grupă: {$this->grupa}",
-                'post_content'   => '',
-                'post_status'    => 'inherit'
-            );
-            
-            // Inserarea fișierului ca atașament
-            $attachment_id = wp_insert_attachment($attachment, $pdf_temp_path);
-            
-            if (!is_wp_error($attachment_id)) {
-                // Nu este nevoie de wp_generate_attachment_metadata() pentru fișiere PDF
-                echo "Fișierul PDF a fost adăugat ca atașament.";
-            } else {
-                echo "A apărut o eroare la crearea atașamentului.";
+        
+            // Tipuri de fișiere de generat
+            $tipuri = ['evaluare', 'examen'];
+        
+            foreach ($tipuri as $tip) {
+                $test_data['examen']['type'] = $tip; // Setează tipul curent în test_data
+        
+                $mpdf = new \Mpdf\Mpdf();
+                $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
+        
+                ob_start();
+                include plugin_dir_path(__DIR__) . 'templates/pdf-template.php';
+                $html = ob_get_clean();
+                $mpdf->WriteHTML($html);
+        
+                $pdf_filename = sanitize_file_name("/{$user->display_name}-{$test_data['examen']['title']}-{$tip}.pdf");
+                $pdf_temp_path = $upload_dir['path'] . '/' . $pdf_filename;
+        
+                $mpdf->Output($pdf_temp_path, \Mpdf\Output\Destination::FILE);
+        
+                $attachment = array(
+                    'guid'           => $upload_dir['url'] . '/' . $pdf_filename,
+                    'post_mime_type' => 'application/pdf',
+                    'post_title'     => "Test {$user->display_name} - {$tip} - Grupă: {$this->grupa}",
+                    'post_content'   => '',
+                    'post_status'    => 'inherit'
+                );
+        
+                $attachment_id = wp_insert_attachment($attachment, $pdf_temp_path);
+        
+                if (!is_wp_error($attachment_id)) {
+                    echo "Fișierul PDF pentru tipul <strong>{$tip}</strong> a fost adăugat ca atașament.<br>";
+                } else {
+                    echo "Eroare la crearea atașamentului pentru tipul <strong>{$tip}</strong>.<br>";
+                }
             }
         }
+
 
         echo 'PDF-urile au fost generate.';
     }
 
-    // Generarea răspunsurilor aleatorii
-    function generate_random_answers($questions, $accuracy = 90) {
+    // Generarea răspunsurilor aleatorii pentru a obține o notă între nota_minima și 10
+    function generate_random_answers($questions, $nota_minima = 8) {
         $answers = [];
-        $options = ['a', 'b', 'c', 'd'];
+        $options = ['a', 'b', 'c'];
         $total_questions = count($questions);
-        $min_correct = ceil($total_questions / 2); // Asigură minim 50% răspunsuri corecte
-    
-        // Generăm un array cu indecși aleatori pentru răspunsurile corecte
-        $correct_indices = array_rand($questions, $min_correct);
-        if (!is_array($correct_indices)) {
-            $correct_indices = [$correct_indices];
+        $punctaj_oficiu = floatval($this->punctaj_oficiu);
+        $punctaj_intrebare = floatval($this->punctaj_intrebare);
+        
+        // Calculăm intervalul de note posibile (între nota_minima și 10)
+        $nota_maxima = 10.0;
+        
+        // Calculăm câte puncte trebuie să obțină din răspunsuri pentru nota minimă și maximă
+        $min_score_needed = max(0, $nota_minima - $punctaj_oficiu);
+        $max_score_needed = $nota_maxima - $punctaj_oficiu;
+        
+        // Calculăm câte răspunsuri corecte sunt necesare pentru a obține notele min și max
+        $min_correct_answers = max(0, ceil($min_score_needed / $punctaj_intrebare));
+        $max_correct_answers = min($total_questions, floor($max_score_needed / $punctaj_intrebare));
+        
+        // Asigurăm că avem un interval valid
+        if ($min_correct_answers > $max_correct_answers) {
+            $min_correct_answers = $max_correct_answers;
         }
+        
+        // Generăm un număr aleatoriu de răspunsuri corecte între min și max
+        $target_correct_answers = rand($min_correct_answers, $max_correct_answers);
+        
+        // Generăm un array cu indecși aleatori pentru răspunsurile corecte
+        $all_indices = range(0, $total_questions - 1);
+        shuffle($all_indices);
+        $correct_indices = array_slice($all_indices, 0, $target_correct_answers);
     
+        // Generăm răspunsurile
         foreach ($questions as $index => $question) {
             $correct_answer = $question[1];
     
-            if (in_array($index, $correct_indices) || rand(1, 100) <= $accuracy) {
-                // Asigurăm că acest index are un răspuns corect
+            if (in_array($index, $correct_indices)) {
+                // Răspuns corect
                 $answers[$index] = $correct_answer;
             } else {
-                // Alegem un răspuns greșit
+                // Răspuns greșit - alegem aleatoriu unul din răspunsurile greșite
                 $wrong_options = array_diff($options, [$correct_answer]);
                 $reindexed_wrong_options = array_values($wrong_options);
                 $answers[$index] = $reindexed_wrong_options[array_rand($reindexed_wrong_options)];
@@ -156,7 +177,7 @@ class PDFGenerator {
     // 🔑 Decriptare CNP din ID numeric
     function decrypt_cnp_from_id($numeric_id, $original_cnp_list) {
         foreach ($original_cnp_list as $cnp) {
-            if (encrypt_cnp_to_id($cnp) === $numeric_id) {
+            if ($this->encrypt_cnp_to_id($cnp) === $numeric_id) {
                 return $cnp; // Găsit în lista originală
             }
         }
