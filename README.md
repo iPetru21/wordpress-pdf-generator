@@ -78,7 +78,16 @@ define( 'GENERATE_PDF_TESTS_UPDATE_ENABLED', true );
 
 ## Changelog
 
-### Version 1.3 (Curent)
+### Version 1.4 (Curent)
+
+#### 🔧 Corecții și îmbunătățiri
+- Actualizat numărul versiunii la 1.4
+- Îmbunătățiri generale de stabilitate și performanță
+
+#### 📝 Documentație
+- Actualizat changelog-ul pentru versiunea 1.4
+
+### Version 1.3
 
 #### ✨ Funcționalități noi
 - **Sistem de update automat din GitHub**: Integrare completă cu YahnisElsts Plugin Update Checker pentru update-uri automate din repository-ul GitHub
