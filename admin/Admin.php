@@ -184,30 +184,41 @@ class GeneratePdfAdmin {
             if ( ! wp_verify_nonce( $_POST['cursant_pdf_import_users_nonce'], 'cursant_pdf_import_users' ) ) {
                 $message = 'Eroare de securitate. Încercați din nou.';
                 $message_type = 'error';
-            } elseif ( empty( $_POST['import_role'] ) ) {
-                $message = 'Selectați grupa (rolul) pentru utilizatorii importați.';
-                $message_type = 'error';
             } elseif ( empty( $_FILES['user_list_file']['tmp_name'] ) || ! is_uploaded_file( $_FILES['user_list_file']['tmp_name'] ) ) {
                 $message = 'Încărcați un fișier .xlsx.';
                 $message_type = 'error';
             } else {
-                $role = sanitize_text_field( $_POST['import_role'] );
+                $role_source = isset( $_POST['import_role_source'] ) ? $_POST['import_role_source'] : 'existing';
                 $file = $_FILES['user_list_file'];
 
-                if ( ! in_array( $role, array_keys( $all_roles ), true ) ) {
-                    $message = 'Rol invalid.';
-                    $message_type = 'error';
+                if ( $role_source === 'new' ) {
+                    $new_role_name = isset( $_POST['import_role_new_name'] ) ? trim( sanitize_text_field( $_POST['import_role_new_name'] ) ) : '';
+                    if ( $new_role_name === '' ) {
+                        $message = 'Introduceți denumirea noului rol (grupă).';
+                        $message_type = 'error';
+                    } else {
+                        $role = $this->ensure_import_role_exists( $new_role_name );
+                        $result = $this->process_user_import( $file['tmp_name'], $role );
+                        $message = $result['message'];
+                        $message_type = $result['success'] ? 'success' : 'error';
+                    }
                 } else {
-                    $result = $this->process_user_import( $file['tmp_name'], $role );
-                    $message = $result['message'];
-                    $message_type = $result['success'] ? 'success' : 'error';
+                    $role = isset( $_POST['import_role'] ) ? sanitize_text_field( $_POST['import_role'] ) : '';
+                    if ( $role === '' || ! in_array( $role, array_keys( $all_roles ), true ) ) {
+                        $message = 'Selectați grupa (rolul) pentru utilizatorii importați.';
+                        $message_type = 'error';
+                    } else {
+                        $result = $this->process_user_import( $file['tmp_name'], $role );
+                        $message = $result['message'];
+                        $message_type = $result['success'] ? 'success' : 'error';
+                    }
                 }
             }
         }
         ?>
         <div class="wrap">
             <h1>Import utilizatori</h1>
-            <p class="description">Încărcați un fișier Excel (.xlsx) în formatul listei de cursanți: antet cu <strong>EMAIL</strong>, <strong>CNP</strong>, <strong>NUME PRENUME</strong> (sau coloane separate <strong>nume</strong> / <strong>prenume</strong>). Antetul poate fi pe orice rând (se detectează automat). Utilizatorii vor fi creați sau actualizați și li se va atribui rolul (grupa) selectat.</p>
+            <p class="description">Încărcați un fișier Excel (.xlsx) în formatul listei de cursanți: antet cu <strong>CNP</strong>, <strong>NUME PRENUME</strong> (sau coloane separate nume/prenume). <strong>EMAIL</strong> și <strong>TELEFON</strong> sunt opționale. Dacă emailul lipsește, se generează unul automat (ex: import-CNP@import.local). Antetul poate fi pe orice rând (se detectează automat). Utilizatorii vor fi creați sau actualizați și li se va atribui rolul (grupa) selectat.</p>
 
             <?php if ( $message ) : ?>
                 <div class="notice notice-<?php echo esc_attr( $message_type ); ?> is-dismissible">
@@ -215,19 +226,42 @@ class GeneratePdfAdmin {
                 </div>
             <?php endif; ?>
 
-            <form method="post" enctype="multipart/form-data" action="">
+            <form method="post" enctype="multipart/form-data" action="" id="cursant-pdf-import-form">
                 <?php wp_nonce_field( 'cursant_pdf_import_users', 'cursant_pdf_import_users_nonce' ); ?>
                 <table class="form-table">
                     <tr>
-                        <th><label for="import_role">Grupa (rol):</label></th>
+                        <th><label>Grupa (rol):</label></th>
                         <td>
-                            <select name="import_role" id="import_role" required>
+                            <fieldset>
+                                <label>
+                                    <input type="radio" name="import_role_source" value="existing" id="import_role_source_existing" checked />
+                                    Rol existent
+                                </label>
+                                <br />
+                                <label>
+                                    <input type="radio" name="import_role_source" value="new" id="import_role_source_new" />
+                                    Rol nou (creează automat)
+                                </label>
+                            </fieldset>
+                            <p class="description">Alegeți un rol deja existent sau introduceți denumirea unui rol nou care va fi creat.</p>
+                        </td>
+                    </tr>
+                    <tr id="row_import_role_existing">
+                        <th><label for="import_role">Selectează rolul:</label></th>
+                        <td>
+                            <select name="import_role" id="import_role">
                                 <option value="">Selectează grupa</option>
-                                <?php foreach ( $all_roles as $key => $role ) : ?>
-                                    <option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $role['name'] ); ?></option>
+                                <?php foreach ( $all_roles as $key => $r ) : ?>
+                                    <option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $r['name'] ); ?></option>
                                 <?php endforeach; ?>
                             </select>
-                            <p class="description">Rolul WordPress care va fi atribuit tuturor utilizatorilor importați.</p>
+                        </td>
+                    </tr>
+                    <tr id="row_import_role_new" style="display: none;">
+                        <th><label for="import_role_new_name">Denumire rol nou:</label></th>
+                        <td>
+                            <input type="text" name="import_role_new_name" id="import_role_new_name" class="regular-text" placeholder="ex: Cursant Seria 2 2026" value="" />
+                            <p class="description">Rolul va fi creat cu permisiuni de tip Abonat (subscriber), apoi utilizatorii vor primi acest rol.</p>
                         </td>
                     </tr>
                     <tr>
@@ -239,15 +273,59 @@ class GeneratePdfAdmin {
                 </table>
                 <?php submit_button( 'Importă utilizatori' ); ?>
             </form>
+            <script>
+            (function(){
+                var form = document.getElementById('cursant-pdf-import-form');
+                if (!form) return;
+                var existing = document.getElementById('import_role_source_existing');
+                var newRole = document.getElementById('import_role_source_new');
+                var rowExisting = document.getElementById('row_import_role_existing');
+                var rowNew = document.getElementById('row_import_role_new');
+                var selectRole = document.getElementById('import_role');
+                var inputNewName = document.getElementById('import_role_new_name');
+                function toggle() {
+                    var isNew = newRole && newRole.checked;
+                    if (rowExisting) rowExisting.style.display = isNew ? 'none' : '';
+                    if (rowNew) rowNew.style.display = isNew ? '' : 'none';
+                    if (selectRole) selectRole.required = !isNew;
+                    if (inputNewName) inputNewName.required = isNew;
+                }
+                if (existing) existing.addEventListener('change', toggle);
+                if (newRole) newRole.addEventListener('change', toggle);
+                toggle();
+            })();
+            </script>
         </div>
         <?php
+    }
+
+    /**
+     * Asigură că rolul există: dacă nu există, îl creează cu permisiuni de subscriber.
+     * Returnează slug-ul rolului (pentru use în get_users etc.).
+     *
+     * @param string $display_name Denumirea afișată a rolului (ex: "Cursant Seria 2 2026").
+     * @return string Slug-ul rolului (ex: "cursant-seria-2-2026").
+     */
+    function ensure_import_role_exists( $display_name ) {
+        $slug = sanitize_title( $display_name );
+        if ( empty( $slug ) ) {
+            $slug = 'cursant-' . substr( uniqid( '', true ), -6 );
+        }
+        $role_object = get_role( $slug );
+        if ( $role_object !== null ) {
+            return $slug;
+        }
+        $subscriber = get_role( 'subscriber' );
+        $capabilities = $subscriber ? $subscriber->capabilities : [ 'read' => true ];
+        add_role( $slug, $display_name, $capabilities );
+        return $slug;
     }
 
     /**
      * Procesează fișierul .xlsx și creează/actualizează utilizatori cu rolul dat.
      *
      * @param string $file_path Calea temporară la fișierul încărcat.
-     * @param string $role      Rolul WordPress de atribuit.
+     * @param string $role      Rolul WordPress de atribuit (slug).
      * @return array{ success: bool, message: string }
      */
     function process_user_import( $file_path, $role ) {
@@ -267,10 +345,10 @@ class GeneratePdfAdmin {
                 return [ 'success' => false, 'message' => 'Fișierul nu conține date (necesar antet + cel puțin o linie de date).' ];
             }
 
-            // Detectare rând antet: primul rând care conține atât "email" cât și "cnp" (ignorăm majuscule)
+            // Detectare rând antet: conține "cnp" și cel puțin una dintre "email", "nume prenume", "nume"
             $header_row = $this->find_import_header_row( $sheet, $highest_row, $col_index );
             if ( $header_row === null ) {
-                return [ 'success' => false, 'message' => 'Nu s-a găsit un rând de antet care să conțină coloanele EMAIL și CNP.' ];
+                return [ 'success' => false, 'message' => 'Nu s-a găsit un rând de antet cu coloana CNP și nume (NUME PRENUME sau nume/prenume).' ];
             }
 
             $headers = $this->get_import_headers( $sheet, $header_row, $col_index );
@@ -280,6 +358,7 @@ class GeneratePdfAdmin {
             $nume_col = null;
             $prenume_col = null;
             $nume_prenume_col = null;
+            $telefon_col = null;
             foreach ( $headers as $col => $name ) {
                 if ( $name === 'email' ) {
                     $email_col = $col;
@@ -291,11 +370,13 @@ class GeneratePdfAdmin {
                     $prenume_col = $col;
                 } elseif ( $name === 'nume prenume' ) {
                     $nume_prenume_col = $col;
+                } elseif ( $name === 'telefon' ) {
+                    $telefon_col = $col;
                 }
             }
 
-            if ( $email_col === null || $cnp_col === null ) {
-                return [ 'success' => false, 'message' => 'Lipsește coloana EMAIL sau CNP în antet.' ];
+            if ( $cnp_col === null ) {
+                return [ 'success' => false, 'message' => 'Lipsește coloana CNP în antet.' ];
             }
             $has_separate = ( $nume_col !== null && $prenume_col !== null );
             $has_combined = ( $nume_prenume_col !== null );
@@ -305,24 +386,17 @@ class GeneratePdfAdmin {
 
             $created = 0;
             $updated = 0;
-            $skipped = 0;
             $errors = [];
             $data_start = $header_row + 1;
 
             for ( $row = $data_start; $row <= $highest_row; $row++ ) {
-                $email_raw = $this->get_cell_value( $sheet, $email_col, $row );
+                $email_raw = $email_col !== null ? $this->get_cell_value( $sheet, $email_col, $row ) : '';
                 $cnp_raw   = $this->get_cell_value( $sheet, $cnp_col, $row );
                 $email = sanitize_email( $email_raw );
                 $cnp   = preg_replace( '/\D/', '', $cnp_raw );
 
                 if ( ! empty( $cnp ) && strlen( $cnp ) !== 13 ) {
                     $errors[] = "Linia {$row}: CNP trebuie 13 cifre.";
-                    continue;
-                }
-
-                // Email poate fi gol în fișier (listă FPC); fără email valid nu putem crea utilizator
-                if ( empty( $email ) || ! is_email( $email ) ) {
-                    $skipped++;
                     continue;
                 }
 
@@ -336,20 +410,37 @@ class GeneratePdfAdmin {
                     $prenume = sanitize_text_field( $prenume );
                 }
 
-                $user = get_user_by( 'email', $email );
+                $telefon = '';
+                if ( $telefon_col !== null ) {
+                    $telefon = sanitize_text_field( $this->get_cell_value( $sheet, $telefon_col, $row ) );
+                }
+
+                // Nume utilizator (user_login) dedus din nume și prenume; dacă lipsesc, generat
+                $login = $this->unique_login_from_name( $nume, $prenume, $cnp, $row );
+
+                $has_valid_email = ( $email !== '' && is_email( $email ) );
+                if ( ! $has_valid_email ) {
+                    $email = $this->generate_import_email( $login );
+                }
+
+                $user = $this->find_import_user( $has_valid_email ? $email : null, $login, $cnp );
                 if ( $user ) {
                     $user_id = $user->ID;
                     wp_update_user( [
                         'ID'         => $user_id,
+                        'user_email' => $email,
                         'first_name' => $prenume,
                         'last_name'  => $nume,
                     ] );
                     update_user_meta( $user_id, 'cnp', $cnp );
+                    if ( $telefon !== '' ) {
+                        update_user_meta( $user_id, 'telefon', $telefon );
+                    }
                     $user->set_role( $role );
                     $updated++;
                 } else {
                     $user_id = wp_insert_user( [
-                        'user_login'   => $email,
+                        'user_login'   => $login,
                         'user_email'   => $email,
                         'first_name'   => $prenume,
                         'last_name'    => $nume,
@@ -361,6 +452,9 @@ class GeneratePdfAdmin {
                         continue;
                     }
                     update_user_meta( $user_id, 'cnp', $cnp );
+                    if ( $telefon !== '' ) {
+                        update_user_meta( $user_id, 'telefon', $telefon );
+                    }
                     $created++;
                 }
             }
@@ -371,9 +465,6 @@ class GeneratePdfAdmin {
             }
             if ( $updated > 0 ) {
                 $parts[] = $updated . ' actualizați';
-            }
-            if ( $skipped > 0 ) {
-                $parts[] = $skipped . ' rânduri sărite (fără email valid)';
             }
             $msg = empty( $parts ) ? 'Niciun utilizator importat.' : implode( ', ', $parts ) . '.';
             if ( ! empty( $errors ) ) {
@@ -389,7 +480,7 @@ class GeneratePdfAdmin {
     }
 
     /**
-     * Găsește rândul de antet: primul rând care conține atât "email" cât și "cnp" (ignoră majuscule).
+     * Găsește rândul de antet: primul rând care conține "cnp" și cel puțin una dintre "email", "nume prenume", "nume".
      */
     private function find_import_header_row( $sheet, $highest_row, $col_index ) {
         $max_scan = min( 20, $highest_row );
@@ -399,8 +490,108 @@ class GeneratePdfAdmin {
                 $val = $this->get_cell_value( $sheet, $c, $r );
                 $values[] = preg_replace( '/\s+/', ' ', strtolower( trim( $val ) ) );
             }
-            if ( in_array( 'email', $values, true ) && in_array( 'cnp', $values, true ) ) {
+            if ( ! in_array( 'cnp', $values, true ) ) {
+                continue;
+            }
+            if ( in_array( 'email', $values, true ) || in_array( 'nume prenume', $values, true ) || in_array( 'nume', $values, true ) ) {
                 return $r;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Generează un user_login unic din nume și prenume. Dacă ambele lipsesc, folosește un login generat.
+     *
+     * @param string $nume    Nume (familie).
+     * @param string $prenume Prenume.
+     * @param string $cnp     CNP (pentru fallback).
+     * @param int    $row     Număr rând (pentru fallback).
+     * @return string user_login unic.
+     */
+    private function unique_login_from_name( $nume, $prenume, $cnp, $row ) {
+        $raw = trim( $prenume . ' ' . $nume );
+        if ( $raw === '' ) {
+            $gen = $this->generate_import_login_email( $cnp, $row );
+            return $gen['login'];
+        }
+        $raw = str_replace( [ 'ă', 'â', 'î', 'ș', 'ț', 'Ă', 'Â', 'Î', 'Ș', 'Ț' ], [ 'a', 'a', 'i', 's', 't', 'a', 'a', 'i', 's', 't' ], $raw );
+        $base = sanitize_user( str_replace( ' ', '-', $raw ), true );
+        $base = preg_replace( '/[^a-z0-9\-_.]/', '-', strtolower( $base ) );
+        $base = preg_replace( '/-+/', '-', trim( $base, '-' ) );
+        if ( $base === '' ) {
+            $gen = $this->generate_import_login_email( $cnp, $row );
+            return $gen['login'];
+        }
+        $candidate = $base;
+        $suffix = 0;
+        while ( get_user_by( 'login', $candidate ) ) {
+            $suffix++;
+            $candidate = $base . '-' . $suffix;
+        }
+        return $candidate;
+    }
+
+    /**
+     * Generează adresă de email pentru import (când nu e furnizată). Folosește login-ul existent.
+     *
+     * @param string $login user_login.
+     * @return string Adresă email validă (login@import.local).
+     */
+    private function generate_import_email( $login ) {
+        return $login . '@import.local';
+    }
+
+    /**
+     * Generează login și email unice pentru import (fallback când nume/prenume lipsesc).
+     *
+     * @param string $cnp CNP (13 cifre) sau gol.
+     * @param int    $row Număr rând (pentru unicitate).
+     * @return array{ login: string, email: string }
+     */
+    private function generate_import_login_email( $cnp, $row ) {
+        $base = 'import';
+        if ( ! empty( $cnp ) && strlen( $cnp ) === 13 ) {
+            $base .= '-' . $cnp;
+        } else {
+            $base .= '-row-' . $row . '-' . substr( uniqid( '', true ), -6 );
+        }
+        $login = $base;
+        $suffix = 0;
+        while ( get_user_by( 'login', $login ) || get_user_by( 'email', $login . '@import.local' ) ) {
+            $suffix++;
+            $login = $base . '-' . $suffix;
+        }
+        return [ 'login' => $login, 'email' => $login . '@import.local' ];
+    }
+
+    /**
+     * Caută un utilizator existent pentru import: după email (dacă e valid), după login, sau după CNP.
+     *
+     * @param string|null $email_valid Email dacă a fost furnizat și valid, altfel null.
+     * @param string      $login_or_email Login sau email (folosit pentru căutare când nu e email valid).
+     * @param string      $cnp CNP.
+     * @return WP_User|null
+     */
+    private function find_import_user( $email_valid, $login_or_email, $cnp ) {
+        if ( $email_valid !== null && $email_valid !== '' ) {
+            $user = get_user_by( 'email', $email_valid );
+            if ( $user ) {
+                return $user;
+            }
+        }
+        $user = get_user_by( 'login', $login_or_email );
+        if ( $user ) {
+            return $user;
+        }
+        if ( ! empty( $cnp ) && strlen( $cnp ) === 13 ) {
+            $users = get_users( [
+                'meta_key'   => 'cnp',
+                'meta_value' => $cnp,
+                'number'     => 1,
+            ] );
+            if ( ! empty( $users ) ) {
+                return $users[0];
             }
         }
         return null;
