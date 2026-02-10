@@ -1,0 +1,134 @@
+## Cursant PDF Generator – Overview & Arhitectură
+
+**Scop**: plugin WordPress care generează PDF-uri cu teste (evaluare/examen) pentru cursanți, pe baza unor fișiere de test și a setărilor din admin.
+
+### Structura principală
+
+- **Fișier principal plugin**: `generate-pdf-tests.php`
+  - Definește metadatele pluginului (nume, versiune, autor).
+  - Expune constantelor pentru update din GitHub:
+    - `GENERATE_PDF_TESTS_GITHUB_REPO`
+    - `GENERATE_PDF_TESTS_GITHUB_BRANCH`
+    - `GENERATE_PDF_TESTS_GITHUB_TOKEN`
+    - `GENERATE_PDF_TESTS_UPDATE_ENABLED`
+  - Integrează biblioteca `Plugin Update Checker` din `vendor/yahnis-elsts/plugin-update-checker` (dacă există) și configurează:
+    - URL repo GitHub
+    - branch-ul sursă pentru update-uri
+    - autentificarea prin token (dacă e setat)
+    - release assets pentru GitHub
+  - Încarcă funcționalitatea principală:
+    - `require __DIR__ . '/admin/Admin.php';`
+    - `require __DIR__ . '/inc/PDFGenerator.php';`
+
+- **Admin**: `admin/Admin.php` (`GeneratePdfAdmin`)
+  - Înregistrează hook-uri în `__construct`:
+    - `admin_menu` → meniu „Setări PDF Cursanți” (`cursant_pdf_settings_page`) și meniu „Decriptare CNP”.
+    - `admin_init` → `cursant_pdf_register_settings`.
+    - Hook-uri de profil utilizator pentru câmpul CNP:
+      - `show_user_profile`, `edit_user_profile` → `add_cnp_field_to_user_profile`.
+      - `personal_options_update`, `edit_user_profile_update` → `save_cnp_field` și `validate_cnp_field`.
+    - `admin_post_cursant_pdf_generate_report` → `cursant_pdf_generate_report` (triggerează generarea PDF-urilor).
+
+- **Generator PDF**: `inc/PDFGenerator.php` (`PDFGenerator`)
+  - Se instanțiază global la încărcarea fișierului.
+  - În `__construct` citește opțiunile:
+    - `cursant_grupa`
+    - `punctaj_intrebare`
+    - `punctaj_oficiu`
+  - Se abonează la acțiunea `cursant_pdf_generate_report_run` cu metoda `generate`.
+
+### Setări & opțiuni din admin
+
+- **Pagina „Setări PDF Cursant”** (`cursant_pdf_settings_page`):
+  - Opțiuni înregistrate (`cursant_pdf_register_settings`):
+    - `cursant_grupa` – rolul WordPress pentru grupă (folosit la `get_users(['role' => $this->grupa])`).
+    - `punctaj_intrebare` – punctaj pe întrebare.
+    - `punctaj_oficiu` – puncte din oficiu.
+    - `test_activ` – ID numeric pentru fișierul de test activ.
+    - `nota_minima` – notă minimă acceptată (default 8).
+  - Afișează și `cursant_last_pdf_generated` (ultima generare).
+  - Conține formular care trimite către `admin-post.php` cu `action=cursant_pdf_generate_report` pentru a porni generarea PDF-urilor.
+
+- **Selectarea testelor**:
+  - În `cursant_pdf_settings_page` se scanează:
+    - `glob( plugin_dir_path(__DIR__) . 'tests/test-*.php' )`
+  - Din numele fișierelor se extrage ID-ul:
+    - format obligatoriu: `test-{id}.php` (ex: `test-1.php`, `test-2.php`).
+  - Opțiunea `test_activ` salvează doar acest `{id}` numeric.
+
+### Structura fișierelor de test
+
+- Locație: directorul `tests/`, fișiere de forma:
+  - `tests/test-1.php`, `tests/test-2.php`, etc.
+- Format așteptat (în `PDFGenerator::include_selected_test`):
+  - Fiecare fișier trebuie să definească variabile globale:
+    - `$questions` – lista întrebărilor (folosită pentru a genera răspunsuri și conținut).
+    - `$options` – opțiunile de răspuns (a, b, c) pe întrebare.
+    - `$commission` – informații despre comisie (folosite în template).
+    - `$examen` – metadate despre examen (titlu, data, tip etc.).
+  - Funcția:
+    - include fișierul corespunzător `test_{$test_id}.php`.
+    - întoarce un array cu cheile `questions`, `options`, `commission`, `examen`.
+
+### Fluxul de generare PDF (`PDFGenerator::generate`)
+
+1. **Trigger**:
+   - Adminul apasă butonul „Generează testele PDF”.
+   - Formularul trimite către `admin-post.php` cu `action=cursant_pdf_generate_report`.
+   - `GeneratePdfAdmin::cursant_pdf_generate_report`:
+     - verifică nonce.
+     - actualizează `cursant_last_pdf_generated`.
+     - rulează acțiunea `do_action('cursant_pdf_generate_report_run');`.
+   - `PDFGenerator::__construct` a înregistrat:
+     - `add_action('cursant_pdf_generate_report_run', [$this, 'generate']);`.
+
+2. **Generare** (`PDFGenerator::generate`):
+   - Verifică permisiunea `manage_options`.
+   - Include mPDF din pluginul „generate-pdf-using-contact-form-7”:
+     - `require WP_CF7_PDF_DIR . 'inc/lib/mpdf/vendor/autoload.php';`
+     - **Dependență importantă**: constantă `WP_CF7_PDF_DIR` definită în pluginul contact form PDF.
+   - Ia utilizatorii cu rolul din `cursant_grupa`:
+     - `$users = get_users(['role' => $this->grupa]);`
+   - Încarcă datele testului:
+     - `$test_data = $this->include_selected_test();`
+   - Pentru fiecare utilizator:
+     - Citește `cnp` din user meta.
+     - Generează un ID numeric criptat: `$id = $this->encrypt_cnp_to_id($cnp);`
+     - Calculează răspunsuri random dar controlate:
+       - `generate_random_answers($test_data['questions'], $nota_minima)` – asigură notă între `nota_minima` și 10, folosind:
+         - `punctaj_intrebare`
+         - `punctaj_oficiu`
+     - Încarcă CSS: `assets/style.css`.
+     - Încarcă template-ul `templates/pdf-template.php` în buffer, îl scrie în mPDF.
+     - Generează două tipuri de PDF pentru fiecare utilizator:
+       - tipuri: `evaluare` și `examen` (setate în `$test_data['examen']['type']`).
+     - Salvează PDF în directorul de upload WordPress și creează atașament:
+       - `wp_insert_attachment` cu titlu „Test {display_name} – {tip} – Grupă: {grupa}”.
+
+3. **Rezultat**:
+   - Pentru fiecare PDF creat, se afișează un mesaj în admin (echo).
+   - La final, se afișează „PDF-urile au fost generate.”.
+
+### Integrare cu alte pluginuri / constante cheie
+
+- **Plugin necesar**: `generate-pdf-using-contact-form-7`
+  - Definit în header:
+    - `Requires Plugins: generate-pdf-using-contact-form-7`
+  - Folosit pentru constantă:
+    - `WP_CF7_PDF_DIR` → path către biblioteca mPDF.
+
+- **Bibliotecă update**: `yahnis-elsts/plugin-update-checker`
+  - Composer: `"yahnis-elsts/plugin-update-checker": "^5.0"`.
+  - Director instalare: `vendor/yahnis-elsts/plugin-update-checker`.
+  - `generate-pdf-tests.php` construiește un `Puc_v4_Factory::buildUpdateChecker(...)` pentru update-uri din GitHub.
+
+### Note pentru extinderi viitoare
+
+- Pentru adăugarea de noi teste:
+  - creează fișiere noi `tests/test-{id}.php` cu aceeași structură de variabile.
+  - pluginul va detecta automat ID-urile și le va afișa în dropdown-ul „Test activ”.
+- Pentru modificarea modului de calcul al notei:
+  - logica este în `PDFGenerator::generate_random_answers`.
+- Pentru modificarea layout-ului PDF:
+  - vezi `assets/style.css` și `templates/pdf-template.php`.
+

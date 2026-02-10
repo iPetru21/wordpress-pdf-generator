@@ -1,0 +1,132 @@
+---
+alwaysApply: true
+---
+
+## CNP – Stocare, criptare și utilizare în plugin
+
+**Scop**: descrierea modului în care pluginul gestionează CNP-ul cursanților, cum îl stochează, cum îl „criptează” într-un ID numeric și cum se face decriptarea/identificarea din admin.
+
+### Câmpul CNP pe utilizator
+
+- **Definire și afișare** – în `GeneratePdfAdmin` (`admin/Admin.php`):
+  - `add_cnp_field_to_user_profile($user)`:
+    - Adaugă câmpul „Cod Numeric Personal (CNP)” în:
+      - profilul utilizatorului (own profile) – `show_user_profile`.
+      - profilul altui utilizator – `edit_user_profile`.
+    - Câmpul este salvat în meta cheia `cnp`:
+      - `get_user_meta($user->ID, 'cnp', true)`.
+
+- **Validare CNP**:
+  - `validate_cnp_field($user_id)`:
+    - Verifică dacă `$_POST['cnp']` există și respectă regex:
+      - `'/^[0-9]{13}$/'` → exact 13 cifre.
+    - În caz contrar, afișează un mesaj de eroare cu `wp_die`.
+
+- **Salvare CNP**:
+  - `save_cnp_field($user_id)`:
+    - Verifică permisiunea `edit_user`.
+    - Stochează valoarea în meta folosind:
+      - `update_user_meta($user_id, 'cnp', sanitize_text_field($_POST['cnp']));`
+    - Cheia de meta este `cnp`.
+
+### Criptarea CNP într-un ID numeric
+
+- **Constanta folosită ca „cheie”**:
+  - În `inc/PDFGenerator.php`:
+    - `define('CNP_SECRET_KEY', '63f4945d921d599f27ae4fdf5bada3f1');`
+  - Această valoare este folosită pentru a genera un hash HMAC SHA256 al CNP-ului.
+
+- **Funcția de criptare**: `PDFGenerator::encrypt_cnp_to_id($cnp)`
+  - Pași:
+    1. `$key = CNP_SECRET_KEY;`
+    2. Generare hash:
+       - `$hash = hash_hmac('sha256', $cnp, $key);`
+    3. Transformare în număr:
+       - `base_convert(substr($hash, 0, 10), 16, 10);`
+    4. Returnează un ID numeric relativ scurt (din primele 10 caractere hex ale hash-ului).
+  - **Observație**: nu este o criptare reversibilă; se folosește pentru:
+    - mapare CNP → ID numeric.
+    - identificare prin comparație (hashing) când avem o listă de CNP-uri originale.
+
+- **Funcția de „decriptare”**: `PDFGenerator::decrypt_cnp_from_id($numeric_id, $original_cnp_list)`
+  - Nu decriptează matematic CNP din ID, ci:
+    - parcurge o listă de CNP-uri originale (`$original_cnp_list`).
+    - pentru fiecare CNP:
+      - calculează `encrypt_cnp_to_id($cnp)` și compară cu `$numeric_id`.
+    - dacă găsește un CNP cu același ID hash, îl returnează.
+    - altfel, returnează `null`.
+  - **Important**: această funcție nu este folosită acum direct în `Admin.php`, dar definește modul recomandat de a regăsi CNP-ul din lista originală.
+
+### Utilizarea CNP în generarea PDF-urilor
+
+- În `PDFGenerator::generate()`:
+  - Pentru fiecare utilizator din rolul selectat (`$this->grupa`):
+    - CNP-ul este citit din meta:
+      - `$cnp = get_user_meta($user_id, 'cnp', true);`
+    - Se generează ID numeric:
+      - `$id = $this->encrypt_cnp_to_id($cnp);`
+    - Ulterior:
+      - `$id` și/sau `$cnp` pot fi folosite în `templates/pdf-template.php` (prin variabilele disponibile în template) pentru a afișa un cod numeric pe lucrare, fără a afișa CNP-ul direct dacă nu se dorește.
+  - Pluginul generează PDF-uri pentru tipurile:
+    - `evaluare`
+    - `examen`
+  - Fiecare PDF este atașat în media library cu titlu ce include numele cursantului și grupa.
+
+### Pagina de admin pentru „Decriptare CNP”
+
+- **Meniu**:
+  - Adăugat în `GeneratePdfAdmin::add_cursant_pdf_menu()` ca submeniu al „PDF Cursanți”:
+    - `add_submenu_page('cursant_pdf', 'Decriptare CNP', 'Decriptare CNP', 'manage_options', 'decriptare-cnp', [$this,'cnp_settings_page']);`
+
+- **Logica paginii**: `cnp_settings_page()`
+  - Obține toate rolurile disponibile (`$wp_roles->roles`).
+  - Preia:
+    - `$selected_role` – rolul selectat din dropdown.
+    - `$input_code` – codul numeric criptat introdus de admin.
+  - Dacă ambele sunt setate:
+    - obține utilizatorii cu acel rol:
+      - `$users = get_users(['role' => $selected_role]);`
+    - instanțiază un nou `PDFGenerator` (ca să aibă metoda `encrypt_cnp_to_id`).
+    - pentru fiecare utilizator:
+      - citește `cnp` din meta.
+      - calculează codul numeric: `$generator->encrypt_cnp_to_id($cnp)`.
+      - dacă se potrivește cu `$input_code`, salvează:
+        - `$decrypted_cnp` (valoarea CNP brută).
+        - `$decrypted_user` (obiectul utilizator).
+        - întrerupe bucla.
+  - În interfață:
+    - Afișează formular cu:
+      - select pentru rol (grupă).
+      - input pentru „Cod numeric criptat”.
+    - Dacă se găsește utilizator:
+      - mesaj de succes:
+        - numele complet al utilizatorului (din meta `first_name` + `last_name`).
+        - CNP-ul decriptat (valoarea brută).
+    - Dacă nu se găsește și cererea este POST:
+      - mesaj de eroare: „Codul nu a putut fi decriptat pentru rolul selectat.”
+
+### Considerente de securitate și bune practici
+
+- **CNP-ul este stocat în clar**:
+  - În meta `cnp`, la nivel de utilizator.
+  - Validat să fie exact 13 cifre.
+  - Ar trebui tratat ca **date sensibile** (date cu caracter personal).
+
+- **Codul numeric criptat**:
+  - Nu este reversibil matematic, dar permite:
+    - identificarea ulterioară a utilizatorului sau a CNP-ului, dacă avem o listă de CNP-uri de referință.
+  - Folosit în:
+    - generarea PDF-urilor (posibil pentru afișarea unui cod intern).
+    - căutarea unui CNP dintr-un cod numeric în pagina „Decriptare CNP”.
+
+- **Recomandări pentru modificări viitoare**:
+  - Dacă se modifică `CNP_SECRET_KEY`:
+    - toate codurile numerice generate anterior vor deveni invalide.
+  - Pentru conformitate sporită:
+    - se poate lua în calcul:
+      - criptarea simetrică a CNP-ului în baza de date.
+      - limitarea afișării CNP-ului brut doar pentru roluri foarte restrictive.
+  - Orice nouă funcționalitate care lucrează cu CNP:
+    - ar trebui să folosească metoda existingă `encrypt_cnp_to_id` pentru consistență.
+    - să evite logarea CNP-ului în clar în debug logs sau output HTML.
+
