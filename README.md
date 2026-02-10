@@ -80,12 +80,13 @@ define( 'GENERATE_PDF_TESTS_UPDATE_ENABLED', true );
 
 ### Version 1.4 (Curent)
 
-#### 🔧 Corecții și îmbunătățiri
-- Actualizat numărul versiunii la 1.4
-- Îmbunătățiri generale de stabilitate și performanță
+#### ✨ Funcționalități noi
+- **Script de build pentru pachet de instalare**: Adăugat `build-plugin-zip.sh` pentru generarea fișierului `wordpress-pdf-generator.zip` destinat instalării pe alte site-uri WordPress
+- Opțiune `INCLUDE_TESTS=1` la rularea scriptului pentru a include directorul `tests/` în arhivă
 
-#### 📝 Documentație
-- Actualizat changelog-ul pentru versiunea 1.4
+#### 🛠️ Îmbunătățiri tehnice
+- Actualizat `.gitignore`: excludere `wordpress-pdf-generator.zip`, `composer.lock`, directoare IDE (`.idea`, `.vscode`) și fișiere temporare
+- Scriptul de build exclude din ZIP: `.git`, `.cursor`, `.gitignore`, `node_modules`, fișiere de log și backup
 
 ### Version 1.3
 
