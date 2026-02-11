@@ -12,6 +12,7 @@ class GeneratePdfAdmin {
         add_action('admin_menu', [ $this, 'add_cursant_pdf_menu' ]);
         add_action('admin_init', [ $this, 'cursant_pdf_register_settings' ]);
         add_action('admin_post_cursant_pdf_generate_report', [ $this, 'cursant_pdf_generate_report' ]);
+        add_action('admin_post_cursant_pdf_save_settings', [ $this, 'cursant_pdf_save_settings' ]);
         add_action('show_user_profile', [ $this, 'add_cnp_field_to_user_profile' ]);
         add_action('edit_user_profile', [ $this, 'add_cnp_field_to_user_profile' ]);
         add_action('personal_options_update', [ $this, 'save_cnp_field' ]);
@@ -142,6 +143,34 @@ class GeneratePdfAdmin {
     }
 
     /**
+     * Handler for saving settings only (no PDF generation).
+     */
+    function cursant_pdf_save_settings() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( __( 'Nu ai permisiunea să accesezi această pagină.' ) );
+        }
+        if ( empty( $_POST['cursant_pdf_generate_nonce'] ) || ! wp_verify_nonce( $_POST['cursant_pdf_generate_nonce'], 'cursant_pdf_generate_report' ) ) {
+            wp_die( __( 'Eroare de securitate. Încercați din nou.' ) );
+        }
+        $grupa = isset( $_POST['cursant_grupa'] ) ? sanitize_text_field( $_POST['cursant_grupa'] ) : '';
+        $template_id = isset( $_POST['cursant_pdf_template_id'] ) ? absint( $_POST['cursant_pdf_template_id'] ) : 0;
+        $nota_minima = isset( $_POST['nota_minima'] ) ? floatval( $_POST['nota_minima'] ) : 8.0;
+        $pdf_filename_label = isset( $_POST['cursant_pdf_filename_label'] ) ? sanitize_text_field( $_POST['cursant_pdf_filename_label'] ) : '';
+        if ( $template_id > 0 ) {
+            update_option( 'cursant_pdf_template_id', $template_id );
+        } else {
+            delete_option( 'cursant_pdf_template_id' );
+        }
+        if ( $grupa !== '' ) {
+            update_option( 'cursant_grupa', $grupa );
+        }
+        update_option( 'nota_minima', $nota_minima );
+        update_option( 'cursant_pdf_filename_label', $pdf_filename_label );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'cursant_pdf_generate', 'saved' => '1' ], admin_url( 'admin.php' ) ) );
+        exit;
+    }
+
+    /**
      * Handler for PDF generation: save options from POST and trigger generation.
      */
     function cursant_pdf_generate_report() {
@@ -241,11 +270,15 @@ class GeneratePdfAdmin {
             $output = get_transient( 'cursant_pdf_generate_output' );
             delete_transient( 'cursant_pdf_generate_output' );
         }
+        $settings_saved = ! empty( $_GET['saved'] );
         ?>
         <div class="wrap">
             <h1>Generare PDF teste</h1>
             <p class="description">Alegeți template-ul de test și grupă (rolul) cursanților pentru care se generează PDF-urile.</p>
 
+            <?php if ( $settings_saved ) : ?>
+                <div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Setările au fost salvate.', 'cursant-pdf' ); ?></p></div>
+            <?php endif; ?>
             <?php if ( $output ) : ?>
                 <div class="notice notice-success" style="white-space:pre-wrap;"><?php echo wp_kses_post( $output ); ?></div>
             <?php endif; ?>
@@ -296,8 +329,24 @@ class GeneratePdfAdmin {
                         </td>
                     </tr>
                 </table>
-                <?php submit_button( 'Generează PDF-uri' ); ?>
+                <p class="submit">
+                    <button type="button" id="cursant-pdf-save-settings" class="button"><?php esc_html_e( 'Salvează setările', 'cursant-pdf' ); ?></button>
+                    <?php submit_button( 'Generează PDF-uri', 'primary', 'submit', false ); ?>
+                </p>
             </form>
+            <script>
+            (function(){
+                var form = document.querySelector('form[action*="admin-post"]');
+                var actionInput = form ? form.querySelector('input[name="action"]') : null;
+                var saveBtn = document.getElementById('cursant-pdf-save-settings');
+                if (form && actionInput && saveBtn) {
+                    saveBtn.addEventListener('click', function() {
+                        actionInput.value = 'cursant_pdf_save_settings';
+                        form.submit();
+                    });
+                }
+            })();
+            </script>
         </div>
         <?php
     }

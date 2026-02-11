@@ -78,7 +78,23 @@ define( 'GENERATE_PDF_TESTS_UPDATE_ENABLED', true );
 
 ## Changelog
 
-### Version 1.4 (Curent)
+### Version 1.6 (Curent)
+
+#### ✨ Funcționalități noi
+- **Buton Salvează setările**: Pe pagina de generare PDF s-a adăugat un buton separat „Salvează setările” care permite salvarea setărilor (template, grupă, notă minimă, denumire fișier) fără a genera PDF-uri. Util pentru configurarea setărilor în prealabil sau pentru asigurarea că modificările din pagină sunt salvate înainte de generare.
+
+### Version 1.5
+
+#### ✨ Funcționalități noi
+- **Pagina de generare PDF**: Raport de generare, selectare template și grupă (rol), setări pentru opțiunile de generare
+- **Template-uri Test PDF (CPT)**: Tip de post personalizat pentru crearea și gestionarea template-urilor de test
+- **Îmbunătățiri date de test**: Gestionare îmbunătățită a datelor de test și a logicii de generare
+
+#### 🔄 Modificări majore
+- Interfață administrativă pentru selectarea template-ului și grupei în pagina de generare
+- Fișiere exemplu pentru importul template-urilor
+
+### Version 1.4
 
 #### ✨ Funcționalități noi
 - **Script de build pentru pachet de instalare**: Adăugat `build-plugin-zip.sh` pentru generarea fișierului `wordpress-pdf-generator.zip` destinat instalării pe alte site-uri WordPress
