@@ -34,7 +34,11 @@ class PDFGenerator {
             return;
         }
 
-        $test_data = $this->include_selected_test();
+        $test_data = $this->get_test_data();
+        if ( $test_data === false ) {
+            echo 'Selectați un template de test valid în pagina Generare PDF (sau configurați un test activ din fișiere).';
+            return;
+        }
 
         foreach ($users as $user) {
             $user_id = $user->ID;
@@ -60,7 +64,9 @@ class PDFGenerator {
                 $html = ob_get_clean();
                 $mpdf->WriteHTML($html);
         
-                $pdf_filename = sanitize_file_name("/{$user->display_name}-{$test_data['examen']['title']}-{$tip}.pdf");
+                $filename_label = get_option( 'cursant_pdf_filename_label', '' );
+                $filename_part = $filename_label !== '' ? $filename_label : $test_data['examen']['title'];
+                $pdf_filename = sanitize_file_name("/{$user->display_name}-{$filename_part}-{$tip}.pdf");
                 $pdf_temp_path = $upload_dir['path'] . '/' . $pdf_filename;
         
                 $mpdf->Output($pdf_temp_path, \Mpdf\Output\Destination::FILE);
@@ -94,14 +100,17 @@ class PDFGenerator {
         $total_questions = count($questions);
         $punctaj_oficiu = floatval($this->punctaj_oficiu);
         $punctaj_intrebare = floatval($this->punctaj_intrebare);
-        
+        if ($punctaj_intrebare <= 0) {
+            $punctaj_intrebare = 1.0;
+        }
+
         // Calculăm intervalul de note posibile (între nota_minima și 10)
         $nota_maxima = 10.0;
-        
+
         // Calculăm câte puncte trebuie să obțină din răspunsuri pentru nota minimă și maximă
         $min_score_needed = max(0, $nota_minima - $punctaj_oficiu);
         $max_score_needed = $nota_maxima - $punctaj_oficiu;
-        
+
         // Calculăm câte răspunsuri corecte sunt necesare pentru a obține notele min și max
         $min_correct_answers = max(0, ceil($min_score_needed / $punctaj_intrebare));
         $max_correct_answers = min($total_questions, floor($max_score_needed / $punctaj_intrebare));
@@ -137,6 +146,22 @@ class PDFGenerator {
         return $answers;
     }    
 
+    /**
+     * Load test data: from CPT template if one is selected, otherwise from file (test_activ).
+     *
+     * @return array|false Same structure as include_selected_test(), or false on failure.
+     */
+    function get_test_data() {
+        $template_id = get_option( 'cursant_pdf_template_id', 0 );
+        if ( $template_id > 0 && class_exists( 'PDF_Test_Template_CPT' ) ) {
+            $data = PDF_Test_Template_CPT::get_test_data_from_template( $template_id );
+            if ( $data !== false ) {
+                return $data;
+            }
+        }
+        return $this->include_selected_test();
+    }
+
     function include_selected_test() {
         $test_id = get_option('test_activ');
 
@@ -151,11 +176,7 @@ class PDFGenerator {
                     'commission' => $commission,
                     'examen' => $examen
                 ];
-            } else {
-                die('<p style="color: red;">Nu există fișierul selectat!</p>');
             }
-        } else {
-            die('<p style="color: red;">Nu a fost selectat niciun test!</p>');
         }
 
         return false;

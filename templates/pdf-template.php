@@ -89,7 +89,7 @@ margin-right: 45px;" src="<?= plugin_dir_url(__DIR__) ?>/assets/images/guvern.pn
                     <?php if($index == 1): ?>
                         <?php if( $examen['type'] == 'evaluare' ): ?>
 							<td rowspan="3">
-								<p>Nume: <?= $user->first_name .' '. $user->last_name ?></p><br>
+								<p>Nume: <?= $user->last_name .' '. $user->first_name ?></p><br>
 								<p>CNP: <?= $cnp ?></p>
 							</td>
                         <?php endif; ?>

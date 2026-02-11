@@ -11,6 +11,7 @@ class GeneratePdfAdmin {
     function __construct() {
         add_action('admin_menu', [ $this, 'add_cursant_pdf_menu' ]);
         add_action('admin_init', [ $this, 'cursant_pdf_register_settings' ]);
+        add_action('admin_post_cursant_pdf_generate_report', [ $this, 'cursant_pdf_generate_report' ]);
         add_action('show_user_profile', [ $this, 'add_cnp_field_to_user_profile' ]);
         add_action('edit_user_profile', [ $this, 'add_cnp_field_to_user_profile' ]);
         add_action('personal_options_update', [ $this, 'save_cnp_field' ]);
@@ -130,7 +131,47 @@ class GeneratePdfAdmin {
                 return isset($_POST['cursant_pdf_update_enabled']) ? '1' : '';
             },
         ]);
+        register_setting('cursant_pdf_settings_group', 'cursant_grupa');
+        register_setting('cursant_pdf_settings_group', 'cursant_pdf_template_id', [
+            'sanitize_callback' => function ($value) {
+                $v = absint( $value );
+                return $v > 0 ? $v : '';
+            },
+        ]);
+        register_setting('cursant_pdf_settings_group', 'nota_minima');
+    }
 
+    /**
+     * Handler for PDF generation: save options from POST and trigger generation.
+     */
+    function cursant_pdf_generate_report() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( __( 'Nu ai permisiunea să accesezi această pagină.' ) );
+        }
+        if ( empty( $_POST['cursant_pdf_generate_nonce'] ) || ! wp_verify_nonce( $_POST['cursant_pdf_generate_nonce'], 'cursant_pdf_generate_report' ) ) {
+            wp_die( __( 'Eroare de securitate. Încercați din nou.' ) );
+        }
+        $grupa = isset( $_POST['cursant_grupa'] ) ? sanitize_text_field( $_POST['cursant_grupa'] ) : '';
+        $template_id = isset( $_POST['cursant_pdf_template_id'] ) ? absint( $_POST['cursant_pdf_template_id'] ) : 0;
+        $nota_minima = isset( $_POST['nota_minima'] ) ? floatval( $_POST['nota_minima'] ) : 8.0;
+        $pdf_filename_label = isset( $_POST['cursant_pdf_filename_label'] ) ? sanitize_text_field( $_POST['cursant_pdf_filename_label'] ) : '';
+        if ( $template_id > 0 ) {
+            update_option( 'cursant_pdf_template_id', $template_id );
+        } else {
+            delete_option( 'cursant_pdf_template_id' );
+        }
+        if ( $grupa !== '' ) {
+            update_option( 'cursant_grupa', $grupa );
+        }
+        update_option( 'nota_minima', $nota_minima );
+        update_option( 'cursant_pdf_filename_label', $pdf_filename_label );
+        update_option( 'cursant_last_pdf_generated', current_time( 'mysql' ) );
+        ob_start();
+        do_action( 'cursant_pdf_generate_report_run' );
+        $output = ob_get_clean();
+        set_transient( 'cursant_pdf_generate_output', $output, 60 );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'cursant_pdf_generate', 'done' => '1' ], admin_url( 'admin.php' ) ) );
+        exit;
     }
 
     // Adăugăm meniul pentru setări
@@ -168,6 +209,97 @@ class GeneratePdfAdmin {
             'cursant_pdf_import_users',
             [ $this, 'import_users_page' ]
         );
+        add_submenu_page(
+            'cursant_pdf',
+            'Generare PDF',
+            'Generare PDF',
+            'manage_options',
+            'cursant_pdf_generate',
+            [ $this, 'generate_pdf_page' ]
+        );
+    }
+
+    /**
+     * Pagina Generare PDF: selectează template și grupă, lansează generarea.
+     */
+    function generate_pdf_page() {
+        global $wp_roles;
+        $all_roles = $wp_roles->roles;
+        $saved_grupa = get_option( 'cursant_grupa', '' );
+        $saved_template_id = get_option( 'cursant_pdf_template_id', 0 );
+        $saved_nota = get_option( 'nota_minima', 8 );
+        $saved_filename_label = get_option( 'cursant_pdf_filename_label', '' );
+        $templates = get_posts( [
+            'post_type'      => 'pdf_test_template',
+            'post_status'    => 'publish',
+            'posts_per_page' => -1,
+            'orderby'        => 'title',
+            'order'          => 'ASC',
+        ] );
+        $output = '';
+        if ( ! empty( $_GET['done'] ) && get_transient( 'cursant_pdf_generate_output' ) ) {
+            $output = get_transient( 'cursant_pdf_generate_output' );
+            delete_transient( 'cursant_pdf_generate_output' );
+        }
+        ?>
+        <div class="wrap">
+            <h1>Generare PDF teste</h1>
+            <p class="description">Alegeți template-ul de test și grupă (rolul) cursanților pentru care se generează PDF-urile.</p>
+
+            <?php if ( $output ) : ?>
+                <div class="notice notice-success" style="white-space:pre-wrap;"><?php echo wp_kses_post( $output ); ?></div>
+            <?php endif; ?>
+
+            <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+                <input type="hidden" name="action" value="cursant_pdf_generate_report">
+                <?php wp_nonce_field( 'cursant_pdf_generate_report', 'cursant_pdf_generate_nonce' ); ?>
+                <table class="form-table">
+                    <tr>
+                        <th><label for="cursant_pdf_template_id">Template test</label></th>
+                        <td>
+                            <select name="cursant_pdf_template_id" id="cursant_pdf_template_id" required>
+                                <option value="">— Selectează template —</option>
+                                <?php foreach ( $templates as $t ) : ?>
+                                    <option value="<?php echo (int) $t->ID; ?>" <?php selected( $saved_template_id, $t->ID ); ?>>
+                                        <?php echo esc_html( $t->post_title ); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <p class="description">Template-urile se creează la <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=pdf_test_template' ) ); ?>">Template-uri Test PDF</a>.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label for="cursant_grupa">Grupă (rol)</label></th>
+                        <td>
+                            <select name="cursant_grupa" id="cursant_grupa" required>
+                                <option value="">— Selectează grupa —</option>
+                                <?php foreach ( $all_roles as $key => $role ) : ?>
+                                    <option value="<?php echo esc_attr( $key ); ?>" <?php selected( $saved_grupa, $key ); ?>>
+                                        <?php echo esc_html( $role['name'] ); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label for="nota_minima">Notă minimă (simulare)</label></th>
+                        <td>
+                            <input type="number" name="nota_minima" id="nota_minima" value="<?php echo esc_attr( $saved_nota ); ?>" min="1" max="10" step="0.5" class="small-text">
+                            <p class="description">Folosit la generarea răspunsurilor simulate (între această notă și 10).</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label for="cursant_pdf_filename_label">Denumire în fișier PDF</label></th>
+                        <td>
+                            <input type="text" name="cursant_pdf_filename_label" id="cursant_pdf_filename_label" value="<?php echo esc_attr( $saved_filename_label ); ?>" class="regular-text" placeholder="<?php echo esc_attr__( 'ex: Test Seria 1 2026', 'cursant-pdf' ); ?>">
+                            <p class="description">Textul care apare în numele fișierului PDF (ex: <code>Prenume-Nume-Denumire-evaluare.pdf</code>). Lăsat gol = se folosește titlul examenului din template.</p>
+                        </td>
+                    </tr>
+                </table>
+                <?php submit_button( 'Generează PDF-uri' ); ?>
+            </form>
+        </div>
+        <?php
     }
 
     /**

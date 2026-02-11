@@ -1,0 +1,189 @@
+[
+    {
+      "title": "Examen Practică – COMPETENȚĂ DIGITALĂ, INCLUSIV DE SIGURANȚĂ PE INTERNET ȘI SECURITATE CIBERNETICĂ ID 303760",
+      "examen_link": "https://tinepasul303760.ro/examen-practica-competente-digitale-model-3/",
+      "examen_type": "examen",
+      "commission": [
+        "Membru 1 - CRISTEA ANA - MIRELA",
+        "Membru 2 - PREDA CRISTIAN",
+        "Președinte - DREGHICIU CRISTINA"
+      ],
+      "questions": [
+        {
+          "text": "Ce avantaj oferă stocarea fișierelor în cloud (ex: Google Drive, OneDrive)?",
+          "options": {
+            "a": "Fișierele pot fi accesate doar de pe un singur calculator",
+            "b": "Poți accesa fișierele de oriunde, de pe orice dispozitiv conectat la Internet",
+            "c": "Se șterg automat după o săptămână"
+          },
+          "correct": "b"
+        },
+        {
+          "text": "Cum poți partaja un fișier din Google Drive cu o altă persoană?",
+          "options": {
+            "a": "Trimiți un e-mail fără atașament",
+            "b": "Click dreapta pe fișier → Partajare → Introdu adresa de e-mail a persoanei",
+            "c": "Salvezi fișierul pe desktop"
+          },
+          "correct": "b"
+        },
+        {
+          "text": "Ce înseamnă colaborarea în timp real într-un document online?",
+          "options": {
+            "a": "Documentul este vizibil doar pentru autor",
+            "b": "Mai multe persoane pot edita simultan același document",
+            "c": "Se trimite prin e-mail după fiecare modificare"
+          },
+          "correct": "b"
+        },
+        {
+          "text": "Cum poți proteja un fișier Word cu parolă?",
+          "options": {
+            "a": "Inserare → Tabel",
+            "b": "Fișier → Informații → Protejare document → Criptare cu parolă",
+            "c": "Revizuire → Comentarii"
+          },
+          "correct": "b"
+        },
+        {
+          "text": "Cum poți sorta rapid datele într-un tabel Excel?",
+          "options": {
+            "a": "Ștergi valorile și le introduci în altă ordine",
+            "b": "Copiezi tabelul într-un document Word",
+            "c": "Selectezi coloana dorită → Date → Sortare A-Z sau Z-A"
+          },
+          "correct": "c"
+        },
+        {
+          "text": "Ce simbol indică o conexiune securizată în bara de adrese a browserului?",
+          "options": {
+            "a": "O pictogramă cu semnul exclamării",
+            "b": "Un triunghi galben cu atenționare",
+            "c": "Lacătul închis lângă adresa web"
+          },
+          "correct": "c"
+        },
+        {
+          "text": "Ce trebuie să faci dacă primești un e-mail suspect care solicită date personale?",
+          "options": {
+            "a": "Răspunzi imediat cu datele cerute",
+            "b": "Nu răspunzi și nu deschizi atașamentele; raportezi mesajul ca phishing",
+            "c": "Descarci fișierul atașat pentru verificare"
+          },
+          "correct": "b"
+        },
+        {
+          "text": "Cum poți crea un nou folder pe calculator?",
+          "options": {
+            "a": "Click dreapta → Nou → Folder",
+            "b": "Deschizând aplicația Paint",
+            "c": "Apăsând tasta Delete"
+          },
+          "correct": "a"
+        },
+        {
+          "text": "Cum poți partaja un document Word prin e-mail direct din aplicație?",
+          "options": {
+            "a": "Copiezi textul într-un fișier nou",
+            "b": "Fișier → Partajare → Trimitere prin e-mail",
+            "c": "Închizi aplicația Word și cauți manual fișierul"
+          },
+          "correct": "b"
+        }
+      ]
+    },
+    {
+        "title": "Examen Teorie – COMPETENȚĂ DIGITALĂ, INCLUSIV DE SIGURANȚĂ PE INTERNET ȘI SECURITATE CIBERNETICĂ ID 303760",
+        "examen_link": "https://tinepasul303760.ro/examen-teorie-competente-digitale-model-1/",
+        "examen_type": "examen",
+        "commission": [
+        "Membru 1 - CRISTEA ANA - MIRELA",
+        "Membru 2 - PREDA CRISTIAN",
+        "Președinte - DREGHICIU CRISTINA"
+        ],
+        "questions": [
+        {
+            "text": "Ce reprezintă termenul TIC?",
+            "options": {
+            "a": "Tehnologii Industriale de Calcul",
+            "b": "Transfer Intern de Conținut",
+            "c": "Tehnologii Informaționale și de Comunicare"
+            },
+            "correct": "c"
+        },
+        {
+            "text": "Ce este un computer?",
+            "options": {
+            "a": "Un aparat de redare a muzicii",
+            "b": "O componentă exclusiv de stocare",
+            "c": "Un dispozitiv care efectuează calcule și procesează informații conform instrucțiunilor"
+            },
+            "correct": "c"
+        },
+        {
+            "text": "Care este funcția principală a unității centrale (CPU)?",
+            "options": {
+            "a": "Stocarea pe termen lung a datelor",
+            "b": "Executarea instrucțiunilor și coordonarea activității componentelor",
+            "c": "Afișarea imaginilor pe monitor"
+            },
+            "correct": "b"
+        },
+        {
+            "text": "Ce este memoria RAM?",
+            "options": {
+            "a": "Un dispozitiv de stocare permanentă",
+            "b": "O memorie temporară folosită pentru datele și programele în execuție",
+            "c": "O unitate de imprimare a datelor"
+            },
+            "correct": "b"
+        },
+        {
+            "text": "Ce este software-ul?",
+            "options": {
+            "a": "Componentele fizice ale calculatorului",
+            "b": "Totalitatea programelor și aplicațiilor care rulează pe un calculator",
+            "c": "Datele stocate pe un hard disk"
+            },
+            "correct": "b"
+        },
+        {
+            "text": "Ce tip de software este sistemul de operare?",
+            "options": {
+            "a": "Software educațional pentru învățare",
+            "b": "Software de bază care gestionează resursele hardware și aplicațiile",
+            "c": "Software de editare video"
+            },
+            "correct": "b"
+        },
+        {
+            "text": "Ce este un fișier digital?",
+            "options": {
+            "a": "O componentă hardware a calculatorului",
+            "b": "O colecție de date stocată pe un dispozitiv electronic",
+            "c": "O aplicație instalată automat de sistem"
+            },
+            "correct": "b"
+        },
+        {
+            "text": "Ce rol are sistemul de operare Windows?",
+            "options": {
+            "a": "Servește exclusiv la stocarea fișierelor",
+            "b": "Rulează doar programe antivirus",
+            "c": "Coordonează hardware-ul și permite interacțiunea utilizatorului cu sistemul"
+            },
+            "correct": "c"
+        },
+        {
+            "text": "Care este unitatea de măsură a capacității de stocare?",
+            "options": {
+            "a": "Volt",
+            "b": "Byte",
+            "c": "Pixel"
+            },
+            "correct": "b"
+        }
+        ]
+    } 
+  ]
+  

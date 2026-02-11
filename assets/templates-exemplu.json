@@ -1,0 +1,188 @@
+[
+  {
+    "title": "Examen Practică – COMPETENȚĂ DIGITALĂ, INCLUSIV DE SIGURANȚĂ PE INTERNET ȘI SECURITATE CIBERNETICĂ",
+    "examen_link": "https://example.ro/examen-practica-tehnologia-informatiei-si-comunicatiilor-tic-model-special",
+    "examen_type": "examen",
+    "commission": [
+      "Membru 1 - MUNTEAN DELIA ELENA",
+      "Membru 2 - BALDEA ELENA",
+      "Președinte - BAICU MARIA VERONICA"
+    ],
+    "questions": [
+      {
+        "text": "Cum creezi un folder nou în Windows?",
+        "options": {
+          "a": "Click dreapta → New → Folder",
+          "b": "Închizi calculatorul și repornești",
+          "c": "Apeși tasta F1"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Cum trimiți un fișier ca atașament într-un e-mail?",
+        "options": {
+          "a": "Clic pe „Attach” / „Atașează fișier” și selectezi documentul",
+          "b": "Scrii numele fișierului în mesaj",
+          "c": "Deschizi fișierul și îl copiezi în browser"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Cum verifici dacă un site este securizat?",
+        "options": {
+          "a": "Are simbolul lacătului și prefixul HTTPS",
+          "b": "Are imagini colorate",
+          "c": "Are reclame multe"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Cum salvezi un document Word ca PDF?",
+        "options": {
+          "a": "File → Save As → alegi PDF",
+          "b": "Apeși tasta Print Screen",
+          "c": "Schimbi fontul documentului"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Cum poți organiza fișierele într-un folder?",
+        "options": {
+          "a": "Sortare după nume, dată, tip sau dimensiune",
+          "b": "Ștergând toate fișierele",
+          "c": "Mutându-le în coșul de gunoi"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Cum verifici spațiul liber pe disc?",
+        "options": {
+          "a": "Click dreapta pe „This PC” → Properties",
+          "b": "Deschizi un browser web",
+          "c": "Apeși Esc"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Cum inserezi un tabel în Word?",
+        "options": {
+          "a": "Insert → Table",
+          "b": "View → Zoom",
+          "c": "Design → Themes"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Cum se face o captură de ecran în Windows?",
+        "options": {
+          "a": "Tasta Print Screen sau Win + Shift + S",
+          "b": "Tasta F11",
+          "c": "Rulezi o aplicație de muzică"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Cum trimiți un fișier prin Google Drive altui utilizator?",
+        "options": {
+          "a": "Click dreapta → Share → introduci e-mailul utilizatorului",
+          "b": "Îl copiezi în Notepad",
+          "c": "Îl redenumești"
+        },
+        "correct": "a"
+      }
+    ]
+  },
+  {
+    "title": "Examen Teorie – COMPETENȚĂ DIGITALĂ, INCLUSIV DE SIGURANȚĂ PE INTERNET ȘI SECURITATE CIBERNETICĂ",
+    "examen_link": "https://example.ro/examen-teorie-tehnologia-informatiei-si-comunicatiilor-tic-model-special",
+    "examen_type": "examen",
+    "commission": [
+      "Membru 1 - MUNTEAN DELIA ELENA",
+      "Membru 2 - BALDEA ELENA",
+      "Președinte - BAICU MARIA VERONICA"
+    ],
+    "questions": [
+      {
+        "text": "Ce este un sistem de operare?",
+        "options": {
+          "a": "Un program care gestionează resursele hardware și software ale calculatorului",
+          "b": "Un dispozitiv periferic folosit pentru stocare",
+          "c": "O aplicație de editat imagini"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Ce reprezintă memoria RAM?",
+        "options": {
+          "a": "Memorie permanentă unde sunt salvate fișierele",
+          "b": "O memorie temporară folosită de sistem pentru a rula programele",
+          "c": "Un tip de arhivă de date"
+        },
+        "correct": "b"
+      },
+      {
+        "text": "Care este funcția unui firewall?",
+        "options": {
+          "a": "Protejează rețeaua filtrând traficul neautorizat",
+          "b": "Crește viteza procesorului",
+          "c": "Optimizează culorile monitorului"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Ce este un fișier PDF?",
+        "options": {
+          "a": "Un format portabil folosit pentru documente care păstrează aspectul original",
+          "b": "Un tip de fișier video",
+          "c": "O arhivă de sistem"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Ce rol are o adresă IP?",
+        "options": {
+          "a": "Identifică un dispozitiv într-o rețea",
+          "b": "Reprezintă parola rețelei Wi-Fi",
+          "c": "Este un program antivirus"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Ce presupune backup-ul automat?",
+        "options": {
+          "a": "Crearea periodică a copiilor de siguranță fără intervenția utilizatorului",
+          "b": "Salvarea datelor în clipboard",
+          "c": "Mutarea fișierelor în coșul de gunoi"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Ce înseamnă compresia fișierelor?",
+        "options": {
+          "a": "Reducerea dimensiunii fișierelor pentru economisirea spațiului",
+          "b": "Ștergerea permanentă a datelor",
+          "c": "Criptarea automată a datelor"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Care este scopul unui program antivirus?",
+        "options": {
+          "a": "Previne, detectează și elimină programe malițioase",
+          "b": "Mărește volumul audio",
+          "c": "Crește luminozitatea ecranului"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Ce reprezintă „cloud computing”?",
+        "options": {
+          "a": "Utilizarea serverelor online pentru stocarea și procesarea datelor",
+          "b": "O tehnologie de editare foto",
+          "c": "O metodă de măsurare a vitezei internetului"
+        },
+        "correct": "a"
+      }
+    ]
+  }
+]

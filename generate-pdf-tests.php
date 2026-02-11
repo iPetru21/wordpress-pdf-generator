@@ -3,7 +3,7 @@
  * Plugin Name: Cursant PDF Generator
  * Description: Generează un PDF cu răspunsurile cursanților.
  * 
- * Version: 1.4
+ * Version: 1.5
  * Author: Iftodi Petru
  * Requires Plugins: generate-pdf-using-contact-form-7
  */
@@ -76,6 +76,10 @@ add_action( 'plugins_loaded', function () {
 // ============================================================================
 // LOAD PLUGIN FUNCTIONALITY
 // ============================================================================
+
+// CPT for PDF test templates (must load before Admin so menu order is correct)
+require __DIR__ . '/inc/class-pdf-test-template-cpt.php';
+new PDF_Test_Template_CPT();
 
 // Load Admin Functionality
 require __DIR__ . '/admin/Admin.php';
