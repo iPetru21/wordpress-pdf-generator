@@ -11,8 +11,15 @@ class PDFGenerator {
 
     function __construct() {
         $this->grupa = get_option('cursant_grupa');
-        $this->punctaj_intrebare = get_option('punctaj_intrebare');
-        $this->punctaj_oficiu = get_option('punctaj_oficiu');
+        $this->punctaj_intrebare = floatval( get_option( 'punctaj_intrebare', 1 ) );
+        $this->punctaj_oficiu = floatval( get_option( 'punctaj_oficiu', 1 ) );
+
+        if ( $this->punctaj_intrebare <= 0 ) {
+            $this->punctaj_intrebare = 1.0;
+        }
+        if ( $this->punctaj_oficiu < 0 ) {
+            $this->punctaj_oficiu = 0.0;
+        }
 
         add_action( 'cursant_pdf_generate_report_run', [$this, 'generate'] );
         
@@ -100,9 +107,6 @@ class PDFGenerator {
         $total_questions = count($questions);
         $punctaj_oficiu = floatval($this->punctaj_oficiu);
         $punctaj_intrebare = floatval($this->punctaj_intrebare);
-        if ($punctaj_intrebare <= 0) {
-            $punctaj_intrebare = 1.0;
-        }
 
         // Calculăm intervalul de note posibile (între nota_minima și 10)
         $nota_maxima = 10.0;

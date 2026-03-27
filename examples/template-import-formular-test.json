@@ -1,0 +1,95 @@
+[
+  {
+    "title": "Test evaluare formular CF7",
+    "examen_link": "https://example.ro/test-evaluare-formular-cf7",
+    "examen_type": "evaluare",
+    "commission": [
+      "Membru 1 - Popescu Ana",
+      "Membru 2 - Ionescu Mihai",
+      "Presedinte - Dumitrescu Elena"
+    ],
+    "questions": [
+      {
+        "text": "Ce faci daca observi o greseala intr-un tabel?",
+        "options": {
+          "a": "A. O ignori",
+          "b": "B. O corectezi.",
+          "c": "C. Stergi tot tabelul"
+        },
+        "correct": "b"
+      },
+      {
+        "text": "Ce trebuie facut inainte de introducerea datelor?",
+        "options": {
+          "a": "A. Verificarea documentelor sursa.",
+          "b": "B. Stergerea fisierelor",
+          "c": "C. Inchiderea calculatorului"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Unde salvezi fisierele importante?",
+        "options": {
+          "a": "A. Nu le salvezi",
+          "b": "B. Oriunde",
+          "c": "C. In foldere organizate."
+        },
+        "correct": "c"
+      },
+      {
+        "text": "Ce faci dupa finalizarea unui document?",
+        "options": {
+          "a": "A. Il stergi",
+          "b": "B. Nu faci nimic",
+          "c": "C. Il verifici si il salvezi."
+        },
+        "correct": "c"
+      },
+      {
+        "text": "Ce faci daca primesti o sarcina urgenta?",
+        "options": {
+          "a": "A. O prioritizezi.",
+          "b": "B. Pleci de la birou",
+          "c": "C. O ignori"
+        },
+        "correct": "a"
+      },
+      {
+        "text": "Ce aplicatie este folosita pentru tabele?",
+        "options": {
+          "a": "A. Paint",
+          "b": "B. Excel",
+          "c": "C. Word"
+        },
+        "correct": "b"
+      },
+      {
+        "text": "Cum organizezi activitatile zilnice?",
+        "options": {
+          "a": "A. Aleator",
+          "b": "B. Dupa prioritati",
+          "c": "C. Fara plan"
+        },
+        "correct": "b"
+      },
+      {
+        "text": "Ce faci daca sistemul da eroare?",
+        "options": {
+          "a": "A. Stergi datele",
+          "b": "B. Continui fara verificare",
+          "c": "C. Verifici si corectezi problema"
+        },
+        "correct": "c"
+      },
+      {
+        "text": "Ce trebuie sa faci pentru a evita pierderea datelor?",
+        "options": {
+          "a": "A. Inchizi calculatorul",
+          "b": "B. Nu salvezi",
+          "c": "C. Salvezi periodic"
+        },
+        "correct": "c"
+      }
+    ]
+  }
+]
