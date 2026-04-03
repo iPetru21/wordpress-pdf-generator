@@ -1,94 +1,94 @@
 [
   {
-    "title": "Test evaluare operator date",
-    "examen_link": "https://example.ro/test-evaluare-operator-date",
+    "title": "Examen Teorie – COMPETENȚE DIGITALE DE UTILIZARE A TEHNOLOGIEI CA INSTRUMENT DE ÎNVĂȚARE ȘI CUNOAȘTERE – ID 312941",
+    "examen_link": "https://example.ro/examen-competente-digitale-312941",
     "examen_type": "evaluare",
     "commission": [
-      "Membru 1 - Popescu Ana",
-      "Membru 2 - Ionescu Mihai",
-      "Presedinte - Dumitrescu Elena"
+      "Membru 1 - TOMOIAGĂ SIMONA",
+      "Membru 2 - JOLDEȘ CLAUDIU - TODOR",
+      "Presedinte - BĂRBĂNȚAN COSMINA NICOLETA"
     ],
     "questions": [
       {
-        "text": "Care este rolul principal al operatorului de date?",
+        "text": "Care este rolul principal al tehnologiei informației în procesul educațional?",
         "options": {
-          "a": "A. Repara calculatoare",
-          "b": "B. Asigura corectitudinea datelor introduse.",
-          "c": "C. Creeaza jocuri"
+          "a": "a) Înlocuirea completă a profesorului",
+          "b": "b) Sprijinirea procesului de învățare prin acces rapid la informații și resurse digitale",
+          "c": "c) Limitarea accesului la informație"
         },
         "correct": "b"
       },
       {
-        "text": "Ce inseamna validarea datelor?",
+        "text": "Ce înseamnă alfabetizarea digitală?",
         "options": {
-          "a": "A. Stergerea datelor",
-          "b": "B. Verificarea corectitudinii datelor.",
-          "c": "C. Copierea datelor"
+          "a": "a) Doar utilizarea calculatorului pentru jocuri",
+          "b": "b) Capacitatea de a folosi tehnologia digitală în mod eficient, sigur și responsabil",
+          "c": "c) Instalarea aplicațiilor fără cunoștințe tehnice"
         },
         "correct": "b"
       },
       {
-        "text": "Ce este o baza de date?",
+        "text": "Care dintre următoarele este un avantaj al utilizării platformelor educaționale online?",
         "options": {
-          "a": "A. Un joc pe calculator",
-          "b": "B. Un sistem de stocare organizata a informatiilor.",
-          "c": "C. Un cablu"
+          "a": "a) Acces limitat la materiale",
+          "b": "b) Posibilitatea de a învăța doar într-un anumit interval orar",
+          "c": "c) Acces la resurse educaționale de oriunde și oricând"
         },
-        "correct": "b"
+        "correct": "c"
       },
       {
-        "text": "Ce caracteristica este importanta pentru un operator de date?",
+        "text": "Ce este un fișier digital?",
         "options": {
-          "a": "A. Viteza de alergare",
-          "b": "B. Atentia la detalii.",
-          "c": "C. Forta fizica"
-        },
-        "correct": "b"
-      },
-      {
-        "text": "Ce rol are organizarea activitatii?",
-        "options": {
-          "a": "A. Incetineste munca",
-          "b": "B. Reduce erorile si creste eficienta.",
-          "c": "C. Nu are importanta"
-        },
-        "correct": "b"
-      },
-      {
-        "text": "Ce este cloud computing?",
-        "options": {
-          "a": "A. Un tip de imprimanta",
-          "b": "B. Stocarea datelor pe internet",
-          "c": "C. Un joc online"
-        },
-        "correct": "b"
-      },
-      {
-        "text": "Ce este un sistem de operare?",
-        "options": {
-          "a": "A. Un program care coordoneaza calculatorul.",
-          "b": "B. Un cablu",
-          "c": "C. Un document"
+          "a": "a) Un document stocat și procesat cu ajutorul unui dispozitiv electronic",
+          "b": "b) Un obiect fizic utilizat în clasă",
+          "c": "c) Un tip de periferic de intrare"
         },
         "correct": "a"
       },
       {
-        "text": "Ce inseamna confidentialitatea datelor?",
+        "text": "Ce aplicație este utilizată pentru redactarea documentelor text?",
         "options": {
-          "a": "A. Distribuirea datelor tuturor",
-          "b": "B. Protejarea datelor de acces neautorizat.",
-          "c": "C. Stergerea datelor"
+          "a": "a) Microsoft Excel",
+          "b": "b) Microsoft Word",
+          "c": "c) Microsoft PowerPoint"
         },
         "correct": "b"
       },
       {
-        "text": "Ce etapa urmeaza dupa introducerea datelor?",
+        "text": "Care este scopul utilizării motoarelor de căutare pe internet?",
         "options": {
-          "a": "A. Validarea datelor.",
-          "b": "B. Stergerea datelor",
-          "c": "C. Oprirea calculatorului"
+          "a": "a) Crearea de fișiere multimedia",
+          "b": "b) Identificarea rapidă a informațiilor relevante online",
+          "c": "c) Protejarea calculatorului de viruși"
         },
-        "correct": "a"
+        "correct": "b"
+      },
+      {
+        "text": "Ce înseamnă învățarea colaborativă în mediul digital?",
+        "options": {
+          "a": "a) Învățarea individuală fără acces la internet",
+          "b": "b) Utilizarea tehnologiei pentru a lucra și învăța împreună cu alți utilizatori",
+          "c": "c) Copierea informațiilor fără verificare"
+        },
+        "correct": "b"
+      },
+      {
+        "text": "Care dintre următoarele reprezintă o bună practică în utilizarea resurselor digitale?",
+        "options": {
+          "a": "a) Distribuirea informațiilor fără a verifica sursa",
+          "b": "b) Respectarea drepturilor de autor și citarea surselor",
+          "c": "c) Descărcarea conținutului din surse necunoscute"
+        },
+        "correct": "b"
+      },
+      {
+        "text": "De ce este importantă utilizarea responsabilă a tehnologiei în procesul de învățare?",
+        "options": {
+          "a": "a) Pentru a reduce accesul la informație",
+          "b": "b) Pentru a evita dependența și riscurile asociate mediului digital",
+          "c": "c) Pentru a limita comunicarea online"
+        },
+        "correct": "b"
       }
     ]
   }

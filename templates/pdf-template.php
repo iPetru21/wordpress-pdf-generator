@@ -26,7 +26,12 @@ margin-right: 45px;" src="<?= plugin_dir_url(__DIR__) ?>/assets/images/guvern.pn
     
             <div class="info">
                 <p>ID: <?= $id ?></p>
-                <p>Link test: <?= $examen['link'] ?> </p>
+                <?php
+                $examen_link = isset( $examen['link'] ) ? trim( (string) $examen['link'] ) : '';
+                if ( $examen_link !== '' ) :
+                    ?>
+                <p>Link test: <?= $examen_link ?></p>
+                <?php endif; ?>
             </div>
             <h3><?= $examen['title'] ?></h3>
             <table class="user-answers">

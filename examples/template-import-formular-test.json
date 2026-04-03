@@ -1,92 +1,92 @@
 [
   {
-    "title": "Test evaluare formular CF7",
-    "examen_link": "https://example.ro/test-evaluare-formular-cf7",
+    "title": "Examen Practică – COMPETENȚE DIGITALE DE UTILIZARE A TEHNOLOGIEI CA INSTRUMENT DE ÎNVĂȚARE ȘI CUNOAȘTERE – ID 312941",
+    "examen_link": "https://tinepasul303760.ro/examen-practica-competente-digitale-312941",
     "examen_type": "evaluare",
     "commission": [
-      "Membru 1 - Popescu Ana",
-      "Membru 2 - Ionescu Mihai",
-      "Presedinte - Dumitrescu Elena"
+      "Membru 1 - TOMOIAGĂ SIMONA",
+      "Membru 2 - JOLDEȘ CLAUDIU - TODOR",
+      "Presedinte - BĂRBĂNȚAN COSMINA NICOLETA"
     ],
     "questions": [
       {
-        "text": "Ce faci daca observi o greseala intr-un tabel?",
+        "text": "Cum poți salva rapid un document Word folosind tastatura?",
         "options": {
-          "a": "A. O ignori",
-          "b": "B. O corectezi.",
-          "c": "C. Stergi tot tabelul"
-        },
-        "correct": "b"
-      },
-      {
-        "text": "Ce trebuie facut inainte de introducerea datelor?",
-        "options": {
-          "a": "A. Verificarea documentelor sursa.",
-          "b": "B. Stergerea fisierelor",
-          "c": "C. Inchiderea calculatorului"
+          "a": "a) Ctrl + S",
+          "b": "b) Ctrl + P",
+          "c": "c) Ctrl + Z"
         },
         "correct": "a"
       },
       {
-        "text": "Unde salvezi fisierele importante?",
+        "text": "Ce opțiune din Word îți permite să modifici dimensiunea textului?",
         "options": {
-          "a": "A. Nu le salvezi",
-          "b": "B. Oriunde",
-          "c": "C. In foldere organizate."
+          "a": "a) Inserare → Tabel",
+          "b": "b) Acasă (Home) → Dimensiune font",
+          "c": "c) Revizuire → Comentarii"
+        },
+        "correct": "b"
+      },
+      {
+        "text": "Cum poți redenumi un fișier în Windows?",
+        "options": {
+          "a": "a) Dublu click pe fișier",
+          "b": "b) Click dreapta → Ștergere",
+          "c": "c) Click dreapta → Redenumire (Rename)"
         },
         "correct": "c"
       },
       {
-        "text": "Ce faci dupa finalizarea unui document?",
+        "text": "Ce funcție din Excel calculează suma valorilor dintr-o coloană?",
         "options": {
-          "a": "A. Il stergi",
-          "b": "B. Nu faci nimic",
-          "c": "C. Il verifici si il salvezi."
+          "a": "a) =COUNT()",
+          "b": "b) =AVERAGE()",
+          "c": "c) =SUM()"
         },
         "correct": "c"
       },
       {
-        "text": "Ce faci daca primesti o sarcina urgenta?",
+        "text": "Cum poți insera un link (hyperlink) într-un document Word?",
         "options": {
-          "a": "A. O prioritizezi.",
-          "b": "B. Pleci de la birou",
-          "c": "C. O ignori"
+          "a": "a) Inserare → Link (Hyperlink)",
+          "b": "b) Fișier → Salvare",
+          "c": "c) Revizuire → Ortografie"
         },
         "correct": "a"
       },
       {
-        "text": "Ce aplicatie este folosita pentru tabele?",
+        "text": "Ce trebuie să faci pentru a trimite un e-mail către mai multe persoane?",
         "options": {
-          "a": "A. Paint",
-          "b": "B. Excel",
-          "c": "C. Word"
+          "a": "a) Trimiți e-mailul de mai multe ori",
+          "b": "b) Introduci mai multe adrese în câmpul Către (To)",
+          "c": "c) Creezi un document Word"
         },
         "correct": "b"
       },
       {
-        "text": "Cum organizezi activitatile zilnice?",
+        "text": "Cum poți atașa un document într-un e-mail?",
         "options": {
-          "a": "A. Aleator",
-          "b": "B. Dupa prioritati",
-          "c": "C. Fara plan"
+          "a": "a) Copiezi conținutul documentului în mesaj",
+          "b": "b) Folosești opțiunea „Atașează fișier”",
+          "c": "c) Scrii numele fișierului în subiect"
         },
         "correct": "b"
       },
       {
-        "text": "Ce faci daca sistemul da eroare?",
+        "text": "Cum poți accesa rapid un site web cunoscut?",
         "options": {
-          "a": "A. Stergi datele",
-          "b": "B. Continui fara verificare",
-          "c": "C. Verifici si corectezi problema"
+          "a": "a) Introduci adresa completă (URL) în bara de adrese a browserului",
+          "b": "b) Cauți fișierul în calculator",
+          "c": "c) Deschizi un document Word"
         },
-        "correct": "c"
+        "correct": "a"
       },
       {
-        "text": "Ce trebuie sa faci pentru a evita pierderea datelor?",
+        "text": "Ce acțiune este recomandată pentru protejarea documentelor importante?",
         "options": {
-          "a": "A. Inchizi calculatorul",
-          "b": "B. Nu salvezi",
-          "c": "C. Salvezi periodic"
+          "a": "a) Ștergerea fișierelor vechi",
+          "b": "b) Salvarea documentelor într-o singură locație",
+          "c": "c) Realizarea unei copii de siguranță (backup)"
         },
         "correct": "c"
       }
