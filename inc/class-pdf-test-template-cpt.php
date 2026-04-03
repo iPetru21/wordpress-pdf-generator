@@ -267,7 +267,8 @@ class PDF_Test_Template_CPT {
 		}
 
 		if ( isset( $_POST['pdf_template_examen_nonce'] ) && wp_verify_nonce( $_POST['pdf_template_examen_nonce'], 'pdf_template_examen' ) ) {
-			update_post_meta( $post_id, self::META_EXAMEN_LINK, esc_url_raw( $_POST['pdf_template_examen_link'] ?? '' ) );
+			$raw_link = isset( $_POST['pdf_template_examen_link'] ) ? trim( wp_unslash( (string) $_POST['pdf_template_examen_link'] ) ) : '';
+			update_post_meta( $post_id, self::META_EXAMEN_LINK, $raw_link === '' ? '' : esc_url_raw( $raw_link ) );
 			$type = isset( $_POST['pdf_template_examen_type'] ) ? sanitize_text_field( $_POST['pdf_template_examen_type'] ) : 'examen';
 			if ( in_array( $type, [ 'examen', 'evaluare' ], true ) ) {
 				update_post_meta( $post_id, self::META_EXAMEN_TYPE, $type );
@@ -598,7 +599,7 @@ class PDF_Test_Template_CPT {
 
 		$examen = [
 			'title' => self::decode_unicode_escapes( $post->post_title ),
-			'link'  => $link ? $link : site_url( '/' ),
+			'link'  => trim( (string) $link ),
 			'type'  => $type,
 		];
 
