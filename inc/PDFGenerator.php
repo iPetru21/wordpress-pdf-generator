@@ -52,7 +52,8 @@ class PDFGenerator {
             $cnp = get_user_meta($user_id, 'cnp', true);
             $id = $this->encrypt_cnp_to_id($cnp);
             $nota_minima = floatval(get_option('nota_minima', 8));
-            $answers = $this->generate_random_answers($test_data['questions'], $nota_minima);
+            $nota_maxima = floatval(get_option('nota_maxima', 10));
+            $answers = $this->generate_random_answers($test_data['questions'], $nota_minima, $nota_maxima);
         
             $css = file_get_contents(plugin_dir_path(__DIR__) . 'assets/style.css');
             $upload_dir = wp_upload_dir();
@@ -100,16 +101,18 @@ class PDFGenerator {
         echo 'PDF-urile au fost generate.';
     }
 
-    // Generarea răspunsurilor aleatorii pentru a obține o notă între nota_minima și 10
-    function generate_random_answers($questions, $nota_minima = 8) {
+    // Generarea răspunsurilor aleatorii pentru a obține o notă între nota_minima și nota_maxima
+    function generate_random_answers($questions, $nota_minima = 8, $nota_maxima = 10) {
         $answers = [];
         $options = ['a', 'b', 'c'];
         $total_questions = count($questions);
         $punctaj_oficiu = floatval($this->punctaj_oficiu);
         $punctaj_intrebare = floatval($this->punctaj_intrebare);
 
-        // Calculăm intervalul de note posibile (între nota_minima și 10)
-        $nota_maxima = 10.0;
+        // Asigurăm un interval valid (nota_maxima nu poate fi sub nota_minima)
+        if ($nota_maxima < $nota_minima) {
+            $nota_maxima = $nota_minima;
+        }
 
         // Calculăm câte puncte trebuie să obțină din răspunsuri pentru nota minimă și maximă
         $min_score_needed = max(0, $nota_minima - $punctaj_oficiu);

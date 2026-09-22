@@ -140,6 +140,7 @@ class GeneratePdfAdmin {
             },
         ]);
         register_setting('cursant_pdf_settings_group', 'nota_minima');
+        register_setting('cursant_pdf_settings_group', 'nota_maxima');
     }
 
     /**
@@ -155,6 +156,10 @@ class GeneratePdfAdmin {
         $grupa = isset( $_POST['cursant_grupa'] ) ? sanitize_text_field( $_POST['cursant_grupa'] ) : '';
         $template_id = isset( $_POST['cursant_pdf_template_id'] ) ? absint( $_POST['cursant_pdf_template_id'] ) : 0;
         $nota_minima = isset( $_POST['nota_minima'] ) ? floatval( $_POST['nota_minima'] ) : 8.0;
+        $nota_maxima = isset( $_POST['nota_maxima'] ) ? floatval( $_POST['nota_maxima'] ) : 10.0;
+        if ( $nota_maxima < $nota_minima ) {
+            $nota_maxima = $nota_minima;
+        }
         $pdf_filename_label = isset( $_POST['cursant_pdf_filename_label'] ) ? sanitize_text_field( $_POST['cursant_pdf_filename_label'] ) : '';
         if ( $template_id > 0 ) {
             update_option( 'cursant_pdf_template_id', $template_id );
@@ -165,6 +170,7 @@ class GeneratePdfAdmin {
             update_option( 'cursant_grupa', $grupa );
         }
         update_option( 'nota_minima', $nota_minima );
+        update_option( 'nota_maxima', $nota_maxima );
         update_option( 'cursant_pdf_filename_label', $pdf_filename_label );
         wp_safe_redirect( add_query_arg( [ 'page' => 'cursant_pdf_generate', 'saved' => '1' ], admin_url( 'admin.php' ) ) );
         exit;
@@ -183,6 +189,10 @@ class GeneratePdfAdmin {
         $grupa = isset( $_POST['cursant_grupa'] ) ? sanitize_text_field( $_POST['cursant_grupa'] ) : '';
         $template_id = isset( $_POST['cursant_pdf_template_id'] ) ? absint( $_POST['cursant_pdf_template_id'] ) : 0;
         $nota_minima = isset( $_POST['nota_minima'] ) ? floatval( $_POST['nota_minima'] ) : 8.0;
+        $nota_maxima = isset( $_POST['nota_maxima'] ) ? floatval( $_POST['nota_maxima'] ) : 10.0;
+        if ( $nota_maxima < $nota_minima ) {
+            $nota_maxima = $nota_minima;
+        }
         $pdf_filename_label = isset( $_POST['cursant_pdf_filename_label'] ) ? sanitize_text_field( $_POST['cursant_pdf_filename_label'] ) : '';
         if ( $template_id > 0 ) {
             update_option( 'cursant_pdf_template_id', $template_id );
@@ -193,6 +203,7 @@ class GeneratePdfAdmin {
             update_option( 'cursant_grupa', $grupa );
         }
         update_option( 'nota_minima', $nota_minima );
+        update_option( 'nota_maxima', $nota_maxima );
         update_option( 'cursant_pdf_filename_label', $pdf_filename_label );
         update_option( 'cursant_last_pdf_generated', current_time( 'mysql' ) );
         ob_start();
@@ -257,6 +268,7 @@ class GeneratePdfAdmin {
         $saved_grupa = get_option( 'cursant_grupa', '' );
         $saved_template_id = get_option( 'cursant_pdf_template_id', 0 );
         $saved_nota = get_option( 'nota_minima', 8 );
+        $saved_nota_maxima = get_option( 'nota_maxima', 10 );
         $saved_filename_label = get_option( 'cursant_pdf_filename_label', '' );
         $templates = get_posts( [
             'post_type'      => 'pdf_test_template',
@@ -318,7 +330,13 @@ class GeneratePdfAdmin {
                         <th><label for="nota_minima">Notă minimă (simulare)</label></th>
                         <td>
                             <input type="number" name="nota_minima" id="nota_minima" value="<?php echo esc_attr( $saved_nota ); ?>" min="1" max="10" step="0.5" class="small-text">
-                            <p class="description">Folosit la generarea răspunsurilor simulate (între această notă și 10).</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label for="nota_maxima">Notă maximă (simulare)</label></th>
+                        <td>
+                            <input type="number" name="nota_maxima" id="nota_maxima" value="<?php echo esc_attr( $saved_nota_maxima ); ?>" min="1" max="10" step="0.5" class="small-text">
+                            <p class="description">Folosite la generarea răspunsurilor simulate (notele generate vor fi între notă minimă și notă maximă). Dacă notă minimă = notă maximă, toate notele generate vor fi egale cu acea valoare.</p>
                         </td>
                     </tr>
                     <tr>
